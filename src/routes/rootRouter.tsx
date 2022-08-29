@@ -5,6 +5,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import screenNames from '../utils/screenNames';
 import { LoginScreen } from '../modules/auth';
 import Verification from '../modules/auth/screens/otp';
+import { CreateProfile } from '../modules/profile';
 
 const RootRouter = createNativeStackNavigator();
 
@@ -14,6 +15,7 @@ export default function RootRoute() {
           <RootRouter.Navigator screenOptions={{headerShown: false,}}>
               <RootRouter.Screen name={screenNames.LOGIN_SCREEN} component={LoginScreen} />
               <RootRouter.Screen name={screenNames.VERIFY} component={Verification} />
+              <RootRouter.Screen name={screenNames.CREATE_PROFILE} component={CreateProfile} />
 
           </RootRouter.Navigator>
       </NavigationContainer>

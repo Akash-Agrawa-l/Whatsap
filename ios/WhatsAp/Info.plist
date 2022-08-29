@@ -46,6 +46,10 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string> ChatApp app requires photo library access</string>
+	<key>NSCameraUsageDesription</key>
+	<string>ChatApp app requires camera access to take photo.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>UILaunchStoryboardName</key>

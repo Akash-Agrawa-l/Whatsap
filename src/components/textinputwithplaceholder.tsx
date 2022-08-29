@@ -13,9 +13,11 @@ interface inputProps {
   placeholderStyle?: Object;
   inputStyle?: Object;
   hasShadow?: boolean;
-  autofocus: boolean;
+  autofocus?: boolean;
   isPhoneNumber?: boolean;
   maxlength?: number,
+  disabled?: boolean,
+  defaultValue?: string,
 }
 
 export default function TextInputWithPlaceholder(props: inputProps) {
@@ -34,13 +36,14 @@ export default function TextInputWithPlaceholder(props: inputProps) {
       ) : null}
       <TextInput
         autoFocus={props.autofocus}
+        editable={props.disabled}
+        defaultValue={props.defaultValue}
         style={[styles.inputStyle, props.inputStyle]}
         maxLength={props.isPhoneNumber ? 10 : props.maxlength}
-        returnKeyType='next'
+        returnKeyType={'next'}
         autoCapitalize='none'
         autoCorrect={false}
         autoComplete='off'
-        onEndEditing={(text)=>console.log("hello",text)}
         keyboardType={ props.isPhoneNumber ? 'numeric' : 'default' }
         onChangeText={props.onChangeText}
       />
@@ -52,7 +55,7 @@ const styles = StyleSheet.create({
   containerStyle: {
     flexDirection: 'row',
     backgroundColor: colors.lightTheme.BACKGROUND,
-    width: vw(335),
+    width: vw(330),
     padding: vw(10),
     borderRadius: vw(10),
     marginVertical: vw(10),

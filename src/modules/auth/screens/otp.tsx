@@ -1,15 +1,148 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import { useRoute } from '@react-navigation/native'
+import {
+  Animated,
+  Platform,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, { useState } from 'react';
+import {useRoute} from '@react-navigation/native';
+import {useDispatch } from 'react-redux';
+import {colors} from '../../../utils/colors';
+import strings from '../../../utils/strings';
+import {vh, vw} from '../../../utils/dimensions';
+// @ts-ignore
+import OtpInput from '../../../components/otpinput';
+import screenNames from '../../../utils/screenNames';
 
-export default function Verification() {
-    const route = useRoute()
-    console.log('items',route.params)
-  return (
-    <View>
-      <Text>Verification</Text>
-    </View>
-  )
+
+interface routeProps{
+    key: string,
+    name: string,
+    params: {
+        phoneNumber: string,
+        confirm: any,
+    },
+    path: any,
 }
 
-const styles = StyleSheet.create({})
+export default function Verification({navigation}:any) {
+  const route: routeProps = useRoute();
+  const {phoneNumber, confirm} = route.params
+
+  const [otp,setotp] = useState('')
+  const dispatch = useDispatch()
+
+  console.log('items', route);
+
+  const onChangeText=(text:string)=>{
+      setotp(text)
+  }
+
+  const onSubmit= async ()=>{
+      try{
+          await confirm.confirm(otp).then((resp:any)=>{
+              console.log('onSubmit response',resp)
+              dispatch({type:'signIn',payload: resp?.user?._user})
+              {resp?.additionalUserInfo?.isNewUser ? navigation.replace(screenNames.CREATE_PROFILE,{details: resp?.user?._user}) : null }
+          })
+      }
+      catch(error){
+          console.log('error',error)
+      }
+  }
+
+  return (
+    <View style={styles.mainContainer}>
+      <StatusBar
+        translucent={false}
+        showHideTransition={'slide'}
+        networkActivityIndicatorVisible={true}
+        backgroundColor={colors.darkTheme.BACKGROUND}
+      />
+      <Animated.View style={[styles.childContainer]}>
+        <Text style={styles.headerText}>{strings.VERIFY}</Text>
+        <Text style={styles.subHeadText}>{strings.OTP_SENT + phoneNumber}</Text>
+
+        <OtpInput onChangeText={onChangeText}/>
+        <Text style={styles.otpNotRecieved}>
+            {strings.NOT_RECIEVED}
+            <Text style={styles.resendOtp}>
+                {strings.RESEND}
+            </Text>
+        </Text>
+
+        <TouchableOpacity onPress={onSubmit} style={styles.submitButton}>
+          <Text style={styles.submitButtonText}>{strings.SUBMIT}</Text>
+        </TouchableOpacity>
+      </Animated.View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    backgroundColor: colors.darkTheme.BACKGROUND,
+    justifyContent: 'center',
+  },
+  childContainer: {
+    backgroundColor: colors.darkTheme.CHILDBACKGROUND,
+    paddingHorizontal: vw(20),
+    alignItems: 'center',
+    alignSelf: 'center',
+    width: vw(350),
+    paddingVertical: vw(40),
+    height: vh(280),
+    borderRadius: vw(40),
+    shadowColor: colors.BLACK,
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 5.5,
+    elevation: 2,
+  },
+  headerText: {
+    fontSize: vw(23),
+    color: colors.darkTheme.TEXT,
+    fontWeight: '600',
+    alignSelf: 'center',
+  },
+  subHeadText: {
+    fontSize: vw(12),
+    color: colors.darkTheme.TEXT,
+    alignSelf: 'center',
+    marginVertical: vw(10),
+  },
+  otpNotRecieved: {
+      marginTop: vw(10),
+      width: vw(280),
+      color: colors.darkTheme.TEXT,
+      fontSize: vw(12),
+  },
+  resendOtp: {
+      textAlign: 'right',
+      color: colors.darkTheme.TEXT,
+      fontSize: vw(12),
+  },
+  submitButton: {
+    backgroundColor: colors.darkTheme.BACKGROUND,
+    height: vw(40),
+    width: vw(140),
+    borderRadius: vw(10),
+    borderWidth: vw(2),
+    borderColor: colors.BLACK_10,
+    marginTop: vw(10),
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  submitButtonText: {
+    color: colors.darkTheme.TEXT,
+    fontSize: vw(16),
+  },
+});
