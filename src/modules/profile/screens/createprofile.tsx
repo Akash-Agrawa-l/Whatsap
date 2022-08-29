@@ -87,6 +87,7 @@ export function CreateProfile({navigation, route}: any) {
       <TextInputWithPlaceholder
         placeholder="Name"
         value={name}
+        // defaultValue={}
         onChangeText={onChangeName}
       />
       <TextInputWithPlaceholder
@@ -136,12 +137,10 @@ const styles = StyleSheet.create({
       borderRadius: vw(70),
   },
   submitButton: {
-    backgroundColor: colors.darkTheme.BACKGROUND,
+    backgroundColor: colors.darkTheme.CHILDBACKGROUND,
     height: vw(40),
     width: vw(140),
     borderRadius: vw(10),
-    borderWidth: vw(2),
-    borderColor: colors.BLACK_10,
     marginTop: vw(30),
     alignSelf: 'center',
     justifyContent: 'center',

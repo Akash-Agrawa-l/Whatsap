@@ -17,7 +17,6 @@ import {colors} from '../../../utils/colors';
 import strings from '../../../utils/strings';
 import TextInputWithPlaceholder from '../../../components/textinputwithplaceholder';
 import screenNames from '../../../utils/screenNames';
-import localimages from '../../../utils/localimages';
 
 // @ts-ignore
 export function LoginScreen({navigation}) {

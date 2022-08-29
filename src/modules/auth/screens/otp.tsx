@@ -35,8 +35,6 @@ export default function Verification({navigation}:any) {
   const [otp,setotp] = useState('')
   const dispatch = useDispatch()
 
-  console.log('items', route);
-
   const onChangeText=(text:string)=>{
       setotp(text)
   }
@@ -46,7 +44,7 @@ export default function Verification({navigation}:any) {
           await confirm.confirm(otp).then((resp:any)=>{
               console.log('onSubmit response',resp)
               dispatch({type:'signIn',payload: resp?.user?._user})
-              {resp?.additionalUserInfo?.isNewUser ? navigation.replace(screenNames.CREATE_PROFILE,{details: resp?.user?._user}) : null }
+              {resp?.additionalUserInfo?.isNewUser ? navigation.replace(screenNames.CREATE_PROFILE,{details: resp?.user?._user}) : navigation.replace(screenNames.HOME_SCREEN) }
           })
       }
       catch(error){

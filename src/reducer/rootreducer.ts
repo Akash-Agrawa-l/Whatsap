@@ -1,10 +1,10 @@
 import { combineReducers } from "redux";
 import {authReducer} from "../modules/auth";
-// import chatReducer from "./homeChat/reducer";
+import { profileReducer } from "../modules/profile";
 
 const rootReducer=combineReducers({
   authReducer,
-//   chatReducer
+  profileReducer
  })
  
  export default rootReducer
