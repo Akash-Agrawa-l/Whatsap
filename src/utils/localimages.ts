@@ -4,4 +4,5 @@ export default {
     LOGO: require(`${fixedPath}/logo.png`),
     LANDING_BG: require(`${fixedPath}/landingBG.jpg`),
     PLACEHOLDER: require(`${fixedPath}/user.png`),
+    SEARCH: require(`${fixedPath}/search.png`),
 }

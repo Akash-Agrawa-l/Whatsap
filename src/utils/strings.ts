@@ -8,4 +8,8 @@ export default {
     OTP_SENT: 'An OTP has been sent to ',
     NOT_RECIEVED: 'OTP Not Recieved? ',
     RESEND: 'Resend OTP',
+    NAME: 'Name',
+    EMAIL: 'Email',
+    ABOUT: 'About',
+    MESSAGES: 'Messages',
 }
