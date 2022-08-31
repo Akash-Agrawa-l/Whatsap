@@ -11,6 +11,7 @@ export const colors = {
   BLACK: '#000000',
   WHITE: '#FFFFFF',
   WHITE_30: '#FFFFFF4D',
+  WHITE_60: '#FFFFFF99',
   BLACK_70: '#000000B3',
   BLACK_10: '#0000001A',
 };

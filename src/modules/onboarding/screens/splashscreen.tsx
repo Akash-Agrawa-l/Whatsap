@@ -1,16 +1,16 @@
 import {StyleSheet, Animated, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
+import firestore from '@react-native-firebase/firestore';
 import localimages from '../../../utils/localimages';
 import {colors} from '../../../utils/colors';
 import {vw} from '../../../utils/dimensions';
 import screenNames from '../../../utils/screenNames';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 
-export function SplashScreen({navigation}:any) {
+export function SplashScreen({navigation}: any) {
   const scale = useState(new Animated.Value(0))[0];
   const {Auth_Data} = useSelector((store: any) => store.authReducer);
-  let uid = Auth_Data?.uid
-  console.log('reducer data',Auth_Data?.uid)
+  console.log('reducer data', Auth_Data?.uid);
 
   let style = {
     transform: [
@@ -35,14 +35,12 @@ export function SplashScreen({navigation}:any) {
     }).start();
   }, []);
 
-  useEffect(()=>{
-      setTimeout(() => {
-          if(Auth_Data?.uid )
-          navigation.replace(screenNames.HOME_SCREEN)
-          else
-          navigation.replace(screenNames.LOGIN_SCREEN)
-      }, 310);
-  },[])
+  useEffect(() => {
+    setTimeout(() => {
+      if (Auth_Data?.uid) navigation.replace(screenNames.HOME_SCREEN);
+      else navigation.replace(screenNames.LOGIN_SCREEN);
+    }, 310);
+  }, []);
 
   return (
     <View style={styles.maincontainer}>

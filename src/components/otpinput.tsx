@@ -23,7 +23,7 @@ export default function OtpInput(props: otpProps) {
 
 const styles = StyleSheet.create({
   otpInputStyle: {
-    width: vw(180),
+    width: vw(200),
     fontSize: vw(18),
     letterSpacing: vw(20),
     paddingVertical: vw(5),

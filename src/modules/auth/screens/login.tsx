@@ -61,15 +61,7 @@ export function LoginScreen({navigation}) {
       confirm: confirm,
     });
   };
-  const verifyOTP = async () => {
-    try {
-      //   @ts-ignore
-      await otp.confirm('123456').then(resp => console.log(resp));
-      console.log('sdfghj');
-    } catch {
-      console.log('error');
-    }
-  };
+
   return (
     <View style={styles.mainContainer}>
       <StatusBar
@@ -110,7 +102,7 @@ const styles = StyleSheet.create({
     // alignItems: 'center',
     paddingVertical: vw(40),
     // marginTop: 'auto',
-    height: vh(280),
+    height: vw(280),
     borderRadius: vw(40),
     shadowColor: colors.BLACK,
     shadowOffset: {

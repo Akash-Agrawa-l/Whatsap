@@ -5,4 +5,5 @@ export default {
     LANDING_BG: require(`${fixedPath}/landingBG.jpg`),
     PLACEHOLDER: require(`${fixedPath}/user.png`),
     SEARCH: require(`${fixedPath}/search.png`),
+    GOBACK: require(`${fixedPath}/goBack.png`),
 }

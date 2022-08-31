@@ -7,9 +7,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {useRoute} from '@react-navigation/native';
-import {useDispatch } from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {colors} from '../../../utils/colors';
 import strings from '../../../utils/strings';
 import {vh, vw} from '../../../utils/dimensions';
@@ -17,40 +17,47 @@ import {vh, vw} from '../../../utils/dimensions';
 import OtpInput from '../../../components/otpinput';
 import screenNames from '../../../utils/screenNames';
 
-
-interface routeProps{
-    key: string,
-    name: string,
-    params: {
-        phoneNumber: string,
-        confirm: any,
-    },
-    path: any,
+interface routeProps {
+  key: string;
+  name: string;
+  params: {
+    phoneNumber: string;
+    confirm: any;
+  };
+  path: any;
 }
 
-export default function Verification({navigation}:any) {
+export default function Verification({navigation}: any) {
   const route: routeProps = useRoute();
-  const {phoneNumber, confirm} = route.params
+  const {phoneNumber, confirm} = route.params;
+  console.log("confirm",confirm)
 
-  const [otp,setotp] = useState('')
-  const dispatch = useDispatch()
+  const [otp, setotp] = useState('');
+  const dispatch = useDispatch();
 
-  const onChangeText=(text:string)=>{
-      setotp(text)
-  }
+  const onChangeText = (text: string) => {
+    setotp(text);
+  };
 
-  const onSubmit= async ()=>{
-      try{
-          await confirm.confirm(otp).then((resp:any)=>{
-              console.log('onSubmit response',resp)
-              dispatch({type:'signIn',payload: resp?.user?._user})
-              {resp?.additionalUserInfo?.isNewUser ? navigation.replace(screenNames.CREATE_PROFILE,{details: resp?.user?._user}) : navigation.replace(screenNames.HOME_SCREEN) }
-          })
-      }
-      catch(error){
-          console.log('error',error)
-      }
-  }
+  const onSubmit = async () => {
+    try {
+      await confirm.confirm(otp).then((resp: any) => {
+        console.log('onSubmit response', resp);
+        dispatch({type: 'signIn', payload: resp?.user?._user});
+        {
+          resp?.additionalUserInfo?.isNewUser
+            ? navigation.replace(screenNames.CREATE_PROFILE, {
+                details: resp?.user?._user,
+              })
+            : navigation.replace(screenNames.HOME_SCREEN, {
+                details: resp?.user?._user,
+              });
+        }
+      })
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
 
   return (
     <View style={styles.mainContainer}>
@@ -64,12 +71,10 @@ export default function Verification({navigation}:any) {
         <Text style={styles.headerText}>{strings.VERIFY}</Text>
         <Text style={styles.subHeadText}>{strings.OTP_SENT + phoneNumber}</Text>
 
-        <OtpInput onChangeText={onChangeText}/>
+        <OtpInput onChangeText={onChangeText} />
         <Text style={styles.otpNotRecieved}>
-            {strings.NOT_RECIEVED}
-            <Text style={styles.resendOtp}>
-                {strings.RESEND}
-            </Text>
+          {strings.NOT_RECIEVED}
+          <Text style={styles.resendOtp}>{strings.RESEND}</Text>
         </Text>
 
         <TouchableOpacity onPress={onSubmit} style={styles.submitButton}>
@@ -117,15 +122,15 @@ const styles = StyleSheet.create({
     marginVertical: vw(10),
   },
   otpNotRecieved: {
-      marginTop: vw(10),
-      width: vw(280),
-      color: colors.darkTheme.TEXT,
-      fontSize: vw(12),
+    marginTop: vw(10),
+    width: vw(280),
+    color: colors.darkTheme.TEXT,
+    fontSize: vw(12),
   },
   resendOtp: {
-      textAlign: 'right',
-      color: colors.darkTheme.TEXT,
-      fontSize: vw(12),
+    textAlign: 'right',
+    color: colors.darkTheme.TEXT,
+    fontSize: vw(12),
   },
   submitButton: {
     backgroundColor: colors.darkTheme.BACKGROUND,

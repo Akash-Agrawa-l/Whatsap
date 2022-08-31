@@ -12,4 +12,8 @@ export default {
     EMAIL: 'Email',
     ABOUT: 'About',
     MESSAGES: 'Messages',
+    CANCEL: 'Cancel',
+    SEARCH: 'Search',
+    ONLINE: 'Online',
+    RECENT: 'RECENT',
 }

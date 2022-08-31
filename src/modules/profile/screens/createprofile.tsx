@@ -15,16 +15,21 @@ import strings from '../../../utils/strings';
 import {vw} from '../../../utils/dimensions';
 import TextInputWithPlaceholder from '../../../components/textinputwithplaceholder';
 import localimages from '../../../utils/localimages';
+import ImageCropPicker from 'react-native-image-crop-picker';
+import screenNames from '../../../utils/screenNames';
+import uploadImage from '../action';
 
 export function CreateProfile({navigation, route}: any) {
   const dispatch = useDispatch();
   const {Auth_Data} = useSelector((store: any) => store.authReducer);
   const {details} = route?.params;
+  let uid = details?.uid;
 
   const [name, setName] = useState('hello');
   const [number, setNumber] = useState(details?.phoneNumber);
   const [About, setAbout] = useState('');
   const [Email, setEmail] = useState('');
+  const [image,setImage] = useState('')
 
   useEffect(() => {
     firestore()
@@ -51,7 +56,6 @@ export function CreateProfile({navigation, route}: any) {
   };
 
   const submitHandler = () => {
-    let uid = details?.uid;
     firestore()
       .collection('Users')
       .doc(uid)
@@ -59,19 +63,40 @@ export function CreateProfile({navigation, route}: any) {
         Name: name,
         Email: Email,
         About: About,
-        display: 'any',
+        display: image,
         uid: uid,
         isActive: true,
       })
       .then(res => {
         console.log('Response is', res);
         dispatch({type: 'Set_Data', payload: res});
-        // navigation.navigate('HomeScreen');
+        navigation.navigate(screenNames.HOME_SCREEN);
       })
       .catch(err => {
         console.log('Error is', err);
       });
   };
+
+  const imagePicker= async()=>{
+    try {
+      const image = await ImageCropPicker.openPicker({
+        cropping: true,
+        height: 150,
+        width: 150,
+      });
+      let cloudImage = {
+        uri: image.sourceURL,
+        type: `image/jpg`,
+        name: `${uid}.${image.path.includes('jpg')? 'jpg' : 'png'}`,
+      }
+      
+      uploadImage(image)
+
+      setImage(image.path);
+    } catch (err) {
+      console.log('ImageErr', err);
+    }
+  }
 
   return (
     <View style={styles.mainContainer}>
@@ -82,7 +107,10 @@ export function CreateProfile({navigation, route}: any) {
         backgroundColor={colors.darkTheme.BACKGROUND}
       />
       <View style={styles.profileImageView}>
-          <Image source={localimages.PLACEHOLDER} style={styles.profileImage}/>
+          <Image source={ image == '' ? localimages.PLACEHOLDER : {uri: image} } style={styles.profileImage}/>
+          <TouchableOpacity onPress={imagePicker} >
+            <Image source={localimages.SEARCH} style={{height: 20, width: 20, position: 'absolute',left: 40,bottom: 5,}} />
+          </TouchableOpacity>
       </View>
       <TextInputWithPlaceholder
         placeholder="Name"
