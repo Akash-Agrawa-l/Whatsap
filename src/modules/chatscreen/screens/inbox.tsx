@@ -1,10 +1,25 @@
-import {Image, ImageBackground, Platform, StyleSheet, Text, View} from 'react-native';
+import {
+  Image,
+  ImageBackground,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import {useSelector} from 'react-redux';
-import {GiftedChat} from 'react-native-gifted-chat';
+import {GiftedChat, InputToolbar} from 'react-native-gifted-chat';
 
-import {screenHeight, vw} from '../../../utils/dimensions';
+import {
+  normalize,
+  screenHeight,
+  screenWidth,
+  vw,
+} from '../../../utils/dimensions';
 import ChatHeader from '../../../components/chatHeader';
 import {colors} from '../../../utils/colors';
 import localimages from '../../../utils/localimages';
@@ -127,20 +142,49 @@ export function Inbox({route}: any) {
       startTyping();
   };
 
+  const renderComposer = (props: any) => {
+    return (
+        <View>
+      <InputToolbar
+        {...props}
+        containerStyle={{
+          marginHorizontal: normalize(10),
+          borderRadius: normalize(30),
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: colors.TRANSPARENT,
+          bottom: -20,
+          borderTopWidth: 0,
+        }}
+
+        primaryStyle={{backgroundColor: colors.TRANSPARENT,}}
+      />
+      </View>
+    );
+  };
+
   return (
     <View style={styles.mainContainer}>
       <ChatHeader status={status} name={Name} pic={pic} />
-      <ImageBackground source={localimages.LANDING_BG} style={{height: screenHeight-80,}} >
+      <SafeAreaView>
+        <Image source={localimages.LANDING_BG} style={styles.backGroundImage} />
+      </SafeAreaView>
       <GiftedChat
+      isKeyboardInternallyHandled={true}
+      infiniteScroll={true}
+      onInputTextChanged={findtyping}
+        wrapInSafeArea={Platform.OS == 'android'}
         messages={messages}
-        bottomOffset={vw(10)}
         user={{
           _id: UserId,
         }}
         onSend={onSend}
-        isTyping={true}
+        renderInputToolbar={renderComposer}
+        isTyping={getTypingStatus}
       />
-      </ImageBackground>
+      <SafeAreaView>
+        <View style={styles.footerView} />
+      </SafeAreaView>
     </View>
   );
 }
@@ -151,6 +195,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.darkTheme.BACKGROUND,
   },
   backGroundImage: {
-      height: Platform.OS == 'ios' ? vw(screenHeight-85) : vw(screenHeight-45),
+    height: vw(screenHeight - 75),
+    width: vw(screenWidth),
+    position: 'absolute',
+    zIndex: -2,
+  },
+  footerView: {
+    height: vw(1),
   },
 });

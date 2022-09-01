@@ -10,7 +10,6 @@ import {useSelector} from 'react-redux';
 export function SplashScreen({navigation}: any) {
   const scale = useState(new Animated.Value(0))[0];
   const {Auth_Data} = useSelector((store: any) => store.authReducer);
-  console.log('reducer data', Auth_Data?.uid);
 
   let style = {
     transform: [

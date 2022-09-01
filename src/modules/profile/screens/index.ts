@@ -1,2 +1,2 @@
 export * from './createprofile'
-export * from './myprofile'
+export * from './profile'

@@ -21,7 +21,6 @@ import screenNames from '../../../utils/screenNames';
 // @ts-ignore
 export function LoginScreen({navigation}) {
   const [number, setnumber] = useState('');
-  const [otp, setotp]: any = useState(null);
   const slide: any = useState(new Animated.Value(0))[0];
 
   const slideStyle = {
@@ -48,18 +47,20 @@ export function LoginScreen({navigation}) {
     setnumber(text);
   };
 
-  // useEffect(() => {
-  //   console.log(otp);
-  //   verifyOTP();
-  // }, [otp]);
 
   const submitHandler = async () => {
+    try{
     let confirm: any = await auth()
       .signInWithPhoneNumber(`+91${number}`, false)
-    navigation.navigate(screenNames.VERIFY, {
+      console.log('Otp Sent',confirm)
+    navigation.replace(screenNames.VERIFY, {
       phoneNumber: `+91${number}`,
       confirm: confirm,
     });
+  } catch{
+    console.log('Error Occured')
+  }
+
   };
 
   return (

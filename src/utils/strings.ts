@@ -16,4 +16,7 @@ export default {
     SEARCH: 'Search',
     ONLINE: 'Online',
     RECENT: 'RECENT',
+    PROFILE_HEADER: "'s Profile",
+    GO_BACK: 'Profile Image',
+    LOGOUT: 'LogOut',
 }

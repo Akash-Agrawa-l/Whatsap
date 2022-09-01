@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
 import {useDispatch, useSelector} from 'react-redux';
 import {colors} from '../../../utils/colors';
 import strings from '../../../utils/strings';
@@ -17,7 +16,7 @@ import TextInputWithPlaceholder from '../../../components/textinputwithplacehold
 import localimages from '../../../utils/localimages';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import screenNames from '../../../utils/screenNames';
-import uploadImage from '../action';
+import {uploadImage} from '../../../utils/common';
 
 export function CreateProfile({navigation, route}: any) {
   const dispatch = useDispatch();
@@ -62,6 +61,7 @@ export function CreateProfile({navigation, route}: any) {
       .set({
         Name: name,
         Email: Email,
+        Number: details?.phoneNumber,
         About: About,
         display: image,
         uid: uid,
@@ -77,6 +77,24 @@ export function CreateProfile({navigation, route}: any) {
       });
   };
 
+  const sucessCallback=(resp:any)=>{
+    console.log(resp.secure_url);
+    setImage(resp?.secure_url)
+    firestore()
+      .collection('Users')
+      .doc(uid)
+      .update({
+        display: resp.secure_url,
+      })
+      .then(res => {
+        console.log('Response is', res);
+      })
+      .catch(err => {
+        console.log('Error is', err);
+      });
+    
+  }
+
   const imagePicker= async()=>{
     try {
       const image = await ImageCropPicker.openPicker({
@@ -90,9 +108,8 @@ export function CreateProfile({navigation, route}: any) {
         name: `${uid}.${image.path.includes('jpg')? 'jpg' : 'png'}`,
       }
       
-      uploadImage(image)
+      uploadImage(cloudImage,sucessCallback)
 
-      setImage(image.path);
     } catch (err) {
       console.log('ImageErr', err);
     }
@@ -108,8 +125,8 @@ export function CreateProfile({navigation, route}: any) {
       />
       <View style={styles.profileImageView}>
           <Image source={ image == '' ? localimages.PLACEHOLDER : {uri: image} } style={styles.profileImage}/>
-          <TouchableOpacity onPress={imagePicker} >
-            <Image source={localimages.SEARCH} style={{height: 20, width: 20, position: 'absolute',left: 40,bottom: 5,}} />
+          <TouchableOpacity onPress={imagePicker} style={styles.editButton} >
+            <Image source={localimages.EDIT} style={styles.editLogo} />
           </TouchableOpacity>
       </View>
       <TextInputWithPlaceholder
@@ -155,7 +172,6 @@ const styles = StyleSheet.create({
       marginBottom: vw(30),
       justifyContent: 'center',
       alignItems: 'center',
-      borderWidth: 1,
   },
   profileImage: {
       height: vw(130),
@@ -177,5 +193,21 @@ const styles = StyleSheet.create({
   submitButtonText: {
     color: colors.darkTheme.TEXT,
     fontSize: vw(16),
+  },
+  editButton: {
+    height: vw(30),
+    width: vw(30),
+    backgroundColor: colors.darkTheme.CHILDBACKGROUND,
+    position: 'absolute',
+    right: vw(15),
+    bottom: vw(5),
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: vw(20),
+  },
+  editLogo: {
+    height: vw(20),
+    width: vw(20),
+    resizeMode: 'contain',
   },
 });

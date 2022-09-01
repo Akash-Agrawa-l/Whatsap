@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     letterSpacing: vw(20),
     paddingVertical: vw(5),
     paddingLeft: vw(9),
-    color: 'white',
+    color: colors.WHITE,
     // borderWidth: 1,
     // borderRadius: vw(8),
     // borderColor: colors.darkTheme.TEXT,

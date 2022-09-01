@@ -5,4 +5,5 @@ export default{
     CREATE_PROFILE: 'Create_Profile',
     HOME_SCREEN: 'Homescreen',
     INBOX: 'Inbox',
+    PROFILE: 'Profile',
 }

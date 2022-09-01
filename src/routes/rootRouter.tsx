@@ -1,4 +1,4 @@
-import {AppState, StyleSheet, Text, View} from 'react-native';
+import {AppState, StatusBar, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -8,9 +8,10 @@ import firestore from '@react-native-firebase/firestore';
 import screenNames from '../utils/screenNames';
 import {LoginScreen} from '../modules/auth';
 import Verification from '../modules/auth/screens/otp';
-import {CreateProfile} from '../modules/profile';
+import {CreateProfile, Profile} from '../modules/profile';
 import {SplashScreen} from '../modules/onboarding';
 import {HomeScreen, Inbox} from '../modules/chatscreen';
+import { colors } from '../utils/colors';
 
 const RootRouter = createNativeStackNavigator();
 
@@ -33,6 +34,7 @@ export default function RootRoute() {
   }, []);
   return (
     <NavigationContainer>
+        {/* <StatusBar backgroundColor={colors.darkTheme.BACKGROUND} translucent={true} /> */}
       <RootRouter.Navigator screenOptions={{headerShown: false}}>
         <RootRouter.Screen name={screenNames.SPLASH} component={SplashScreen} />
         <RootRouter.Screen
@@ -49,6 +51,7 @@ export default function RootRoute() {
           component={HomeScreen}
         />
         <RootRouter.Screen name={screenNames.INBOX} component={Inbox} />
+        <RootRouter.Screen name={screenNames.PROFILE} component={Profile} />
       </RootRouter.Navigator>
     </NavigationContainer>
   );
