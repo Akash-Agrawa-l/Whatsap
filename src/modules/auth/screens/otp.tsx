@@ -10,10 +10,11 @@ import {
 import React, {useState} from 'react';
 import {useRoute} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
+import firestore from '@react-native-firebase/firestore';
+
 import {colors} from '../../../utils/colors';
 import strings from '../../../utils/strings';
 import {vh, vw} from '../../../utils/dimensions';
-// @ts-ignore
 import OtpInput from '../../../components/otpinput';
 import screenNames from '../../../utils/screenNames';
 
@@ -30,7 +31,7 @@ interface routeProps {
 export default function Verification({navigation}: any) {
   const route: routeProps = useRoute();
   const {phoneNumber, confirm} = route.params;
-  console.log("confirm",confirm)
+  console.log('confirm', confirm);
 
   const [otp, setotp] = useState('');
   const dispatch = useDispatch();
@@ -49,11 +50,19 @@ export default function Verification({navigation}: any) {
             ? navigation.replace(screenNames.CREATE_PROFILE, {
                 details: resp?.user?._user,
               })
-            : navigation.replace(screenNames.HOME_SCREEN, {
-                details: resp?.user?._user,
-              });
+            : firestore()
+                .collection('Users')
+                .where('uid', '==', resp?.user?._user.uid)
+                .get()
+                .then((res: any) => {
+                  let users = res?._docs?.map((item: any) => {
+                    return item._data;
+                  });
+                  dispatch({type: 'Set_Data', payload: users[0]});
+                });
+          navigation.replace(screenNames.HOME_SCREEN);
         }
-      })
+      });
     } catch (error) {
       console.log('error', error);
     }

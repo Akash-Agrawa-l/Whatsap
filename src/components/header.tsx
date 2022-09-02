@@ -102,7 +102,7 @@ export default function CustomHeader({name, logout}: headerProps) {
           </Animated.View>
         </View>
       ) : (
-        <View style={[styles.mainContainer, {marginTop: vh(StatusBarManager.HEIGHT),}]}>
+        <View style={[styles.mainContainer]}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Image source={localimages.GOBACK} style={styles.backButton} />
           </TouchableOpacity>
@@ -125,7 +125,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: vw(45),
-    marginTop: normalize(150),
     paddingHorizontal: vw(20),
     overflow: 'hidden',
     width: vw(DesignWidth),

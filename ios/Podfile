@@ -29,6 +29,8 @@ target 'WhatsAp' do
     # Pods for testing
   end
 
+  # pod 'react-native-video', :path => '../node_modules/react-native-video/react-native-video.podspec'
+
   post_install do |installer|
     react_native_post_install(installer)
     __apply_Xcode_12_5_M1_post_install_workaround(installer)

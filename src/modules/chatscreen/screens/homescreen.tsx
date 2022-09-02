@@ -28,6 +28,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import localimages from '../../../utils/localimages';
 import strings from '../../../utils/strings';
 import {BlurView} from '@react-native-community/blur';
+import AddButton from '../../../components/addbutton';
+import Story from '../../../components/storycomponent';
 
 // @ts-ignore
 export function HomeScreen({navigation}) {
@@ -50,9 +52,20 @@ export function HomeScreen({navigation}) {
   };
 
   useEffect(() => {
+    // firestore()
+    //   .collection('Users')
+    //   .where('uid', '!=', UserId)
+    //   .get()
+    //   .then((res: any) => {
+    //     let users = res?._docs?.map((item: any) => {
+    //       return item._data;
+    //     });
+
+    //     updateAllUsers(users);
+    //   });
     firestore()
       .collection('Users')
-      .where('uid', '!=', UserId)
+      .doc(UserId).collection('Inbox')
       .get()
       .then((res: any) => {
         let users = res?._docs?.map((item: any) => {
@@ -93,6 +106,7 @@ export function HomeScreen({navigation}) {
         UID: item?.uid,
         pic: item?.display,
         status: item?.isActive,
+        bio: item?.About,
       });
     };
 
@@ -127,13 +141,16 @@ export function HomeScreen({navigation}) {
     <View style={styles.mainContainer}>
       <CustomHeader />
       <Text style={styles.recentText}>{strings.RECENT}</Text>
-      <View style={styles.recentUsers}></View>
+      <View style={styles.recentUsers}>
+        <Story/>
+      </View>
       <View style={styles.listContainer}>
         <FlatList
           data={allUsers}
           renderItem={renderItem}
           keyExtractor={keyEx}
         />
+        <AddButton/>
       </View>
     </View>
   );
@@ -156,6 +173,7 @@ const styles = StyleSheet.create({
   },
   recentUsers: {
     height: vw(105),
+    justifyContent: 'center',
   },
   listContainer: {
     height: Platform.OS == 'ios' ? vh(620) : vw(620),

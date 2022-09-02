@@ -9,4 +9,7 @@ export default {
     MENU: require(`${fixedPath}/menu.png`),
     EDIT: require(`${fixedPath}/edit.png`),
     LOGOUT: require(`${fixedPath}/logout.png`),
+    ADD: require(`${fixedPath}/plus.png`),
+    STORY: require(`${fixedPath}/story.png`),
+    CHAT: require(`${fixedPath}/chat.png`),
 }

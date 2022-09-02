@@ -5,11 +5,12 @@ import localimages from '../../../utils/localimages';
 import {colors} from '../../../utils/colors';
 import {vw} from '../../../utils/dimensions';
 import screenNames from '../../../utils/screenNames';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 export function SplashScreen({navigation}: any) {
   const scale = useState(new Animated.Value(0))[0];
   const {Auth_Data} = useSelector((store: any) => store.authReducer);
+  const dispatch = useDispatch()
 
   let style = {
     transform: [
@@ -32,6 +33,18 @@ export function SplashScreen({navigation}: any) {
       duration: 300,
       useNativeDriver: true,
     }).start();
+
+    firestore()
+      .collection('Users')
+      .where('uid', '==', Auth_Data?.uid)
+      .get()
+      .then((res: any) => {
+        let users = res?._docs?.map((item: any) => {
+          return item._data;
+        });
+        console.log(users[0]);
+        dispatch({type: 'Set_Data', payload: users[0]});
+      });
   }, []);
 
   useEffect(() => {

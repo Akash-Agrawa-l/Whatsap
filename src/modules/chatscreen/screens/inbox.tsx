@@ -12,7 +12,7 @@ import {
 import React, {useCallback, useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import {useSelector} from 'react-redux';
-import {GiftedChat, InputToolbar} from 'react-native-gifted-chat';
+import {Bubble, GiftedChat, InputToolbar} from 'react-native-gifted-chat';
 
 import {
   normalize,
@@ -23,17 +23,21 @@ import {
 import ChatHeader from '../../../components/chatHeader';
 import {colors} from '../../../utils/colors';
 import localimages from '../../../utils/localimages';
+import fonts from '../../../utils/fonts';
 
 export function Inbox({route}: any) {
-  const {Name, UID, pic, status} = route.params;
+  const {Name, UID, pic, status, bio} = route.params;
 
   const [messages, setMessages] = useState([]);
   const {Auth_Data} = useSelector((store: any) => store.authReducer);
+  const {User_Data} = useSelector((store: any) => store.profileReducer);
   let UserId = Auth_Data?.uid;
   const [userStatus, setuserStatus] = useState('');
   const [isTyping, setisTyping] = useState<boolean>(false);
   const [getTypingStatus, setgetTypingStatus] = useState(false);
   const docid = UID > UserId ? UserId + '-' + UID : UID + '-' + UserId;
+
+  console.log('userData', User_Data);
 
   useEffect(() => {
     const subscribe = firestore()
@@ -51,6 +55,7 @@ export function Inbox({route}: any) {
         //@ts-ignore
         setMessages(allmsg);
       });
+
     return subscribe;
   }, []);
 
@@ -97,6 +102,34 @@ export function Inbox({route}: any) {
       .collection('messages')
       .doc(mymsg._id)
       .set(mymsg);
+
+    console.log('other User', UID, 'current user', UserId);
+
+    if (messages.length == 0) {
+      firestore()
+        .collection('Users')
+        .doc(UserId)
+        .collection('Inbox')
+        .doc(UID)
+        .set({
+          Name: Name,
+          display: pic,
+          uid: UID,
+          About: bio,
+        }).then((res)=>{console.log('response',res)})
+
+      firestore()
+        .collection('Users')
+        .doc(UID)
+        .collection('Inbox')
+        .doc(UserId)
+        .set({
+          Name: User_Data?.Name,
+          display: User_Data?.display,
+          uid: User_Data?.uid,
+          About: User_Data?.About,
+        });
+    }
   };
 
   useEffect(() => {
@@ -144,21 +177,20 @@ export function Inbox({route}: any) {
 
   const renderComposer = (props: any) => {
     return (
-        <View>
-      <InputToolbar
-        {...props}
-        containerStyle={{
-          marginHorizontal: normalize(10),
-          borderRadius: normalize(30),
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: colors.TRANSPARENT,
-          bottom: -20,
-          borderTopWidth: 0,
-        }}
-
-        primaryStyle={{backgroundColor: colors.TRANSPARENT,}}
-      />
+      <View>
+        <InputToolbar
+          {...props}
+          containerStyle={{
+            marginHorizontal: normalize(10),
+            borderRadius: normalize(30),
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: colors.TRANSPARENT,
+            bottom: 0,
+            borderTopWidth: 0,
+          }}
+          primaryStyle={{backgroundColor: colors.BLACK_10}}
+        />
       </View>
     );
   };
@@ -167,19 +199,42 @@ export function Inbox({route}: any) {
     <View style={styles.mainContainer}>
       <ChatHeader status={status} name={Name} pic={pic} />
       <SafeAreaView>
-        <Image source={localimages.LANDING_BG} style={styles.backGroundImage} />
+        {/* <Image source={localimages.LANDING_BG} style={styles.backGroundImage} /> */}
       </SafeAreaView>
       <GiftedChat
-      isKeyboardInternallyHandled={true}
-      infiniteScroll={true}
-      onInputTextChanged={findtyping}
+        isKeyboardInternallyHandled={true}
+        infiniteScroll={true}
+        onInputTextChanged={findtyping}
+        renderBubble={props => {
+          return (
+            <Bubble
+              {...props}
+              wrapperStyle={{
+                left: {backgroundColor: colors.LEFT_BUBBLE},
+                right: {backgroundColor: colors.RIGHT_BUBBLE},
+              }}
+              textStyle={{
+                left: {
+                  fontFamily: fonts.REGULAR,
+                  fontSize: vw(13),
+                  color: colors.WHITE,
+                },
+                right: {
+                  fontFamily: fonts.REGULAR,
+                  fontSize: vw(13),
+                  color: colors.WHITE,
+                },
+              }}
+            />
+          );
+        }}
         wrapInSafeArea={Platform.OS == 'android'}
         messages={messages}
         user={{
           _id: UserId,
         }}
         onSend={onSend}
-        renderInputToolbar={renderComposer}
+        // renderInputToolbar={renderComposer}
         isTyping={getTypingStatus}
       />
       <SafeAreaView>
@@ -195,7 +250,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.darkTheme.BACKGROUND,
   },
   backGroundImage: {
-    height: vw(screenHeight - 75),
+    height: vw(screenHeight - 65),
     width: vw(screenWidth),
     position: 'absolute',
     zIndex: -2,

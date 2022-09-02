@@ -28,25 +28,11 @@ interface profileProps {
 // @ts-ignore
 export function Profile({uid,navigation}: profileProps) {
   const {Auth_Data} = useSelector((store: any) => store.authReducer);
+  const {User_Data} = useSelector((store: any) => store.authReducer);
   let Uid = uid ? uid : Auth_Data?.uid;
-  const [user, setUser]: any = useState();
+  const [user, setUser]: any = useState(User_Data);
   const [image, setImage] = useState('');
   const dispatch = useDispatch()
-
-  useEffect(() => {
-    firestore()
-      .collection('Users')
-      .where('uid', '==', Uid)
-      .get()
-      .then((res: any) => {
-        let users = res?._docs?.map((item: any) => {
-          return item._data;
-        });
-        console.log(users[0]);
-        setImage(users[0].display);
-        setUser(users[0]);
-      });
-  }, []);
 
   const sucessCallback=(resp:any)=>{
     console.log(resp.secure_url);
@@ -91,6 +77,7 @@ export function Profile({uid,navigation}: profileProps) {
     .signOut()
     .then(()=>{ 
       dispatch({type: 'signIn', payload: {}});
+      dispatch({type: 'Set_Data', payload: {}});
     navigation.replace(screenNames.LOGIN_SCREEN)})
   }
 
