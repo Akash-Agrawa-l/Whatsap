@@ -4,7 +4,6 @@ import {
   NativeModules,
   Platform,
   SafeAreaView,
-  StatusBar,
   StyleSheet,
   Text,
   TextInput,
@@ -29,8 +28,7 @@ export default function CustomHeader({name, logout}: headerProps) {
   const navigation = useNavigation();
   const route = useRoute();
   const animation = useState(new Animated.Value(0))[0];
-  const height = parseInt( StatusBar.currentHeight)
-  console.log(StatusBar.currentHeight)
+  const height = parseInt(NativeModules.StatusBarManager.HEIGHT);
 
   const toggleStyle = {
     transform: [
@@ -49,8 +47,8 @@ export default function CustomHeader({name, logout}: headerProps) {
       },
     ],
     zIndex: animation.interpolate({
-        inputRange: [0,1],
-        outputRange: [-1,1],
+      inputRange: [0, 1],
+      outputRange: [-1, 1],
     }),
   };
 
@@ -73,18 +71,26 @@ export default function CustomHeader({name, logout}: headerProps) {
   return (
     <SafeAreaView>
       {route.name != screenNames.PROFILE ? (
-        <View style={[styles.mainContainer,{marginTop: Platform.OS == 'android' ? vw(height) : 0,}]}>
-          <Text style={styles.headerText}>{strings.MESSAGES}</Text>
-          <TouchableOpacity onPress={handleRipple}>
-            <Image source={localimages.SEARCH} style={styles.searchImage} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              // @ts-ignore
-              navigation.navigate(screenNames.PROFILE);
-            }}>
-            <Image source={localimages.MENU} style={styles.menuImage} />
-          </TouchableOpacity>
+        <View style={[styles.mainContainer, {marginTop: Platform.OS == 'android' ? vw(140) : vw(height)}]}>
+          {route.name == screenNames.ADD_CHAT ? (
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Image source={localimages.GOBACK} style={styles.backButton} />
+            </TouchableOpacity>
+          ) : (
+            <Text style={styles.headerText}>{strings.MESSAGES}</Text>
+          )}
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity onPress={handleRipple}>
+              <Image source={localimages.SEARCH} style={styles.searchImage} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                // @ts-ignore
+                navigation.navigate(screenNames.PROFILE);
+              }}>
+              <Image source={localimages.MENU} style={styles.menuImage} />
+            </TouchableOpacity>
+          </View>
           <Animated.View style={[styles.searchBarMainContainer, toggleStyle]}>
             <View style={styles.searchBarContainer}>
               <TextInput
@@ -102,7 +108,7 @@ export default function CustomHeader({name, logout}: headerProps) {
           </Animated.View>
         </View>
       ) : (
-        <View style={[styles.mainContainer]}>
+        <View style={[styles.secondaryContainer]}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Image source={localimages.GOBACK} style={styles.backButton} />
           </TouchableOpacity>
@@ -121,6 +127,18 @@ export default function CustomHeader({name, logout}: headerProps) {
 
 const styles = StyleSheet.create({
   mainContainer: {
+    backgroundColor: colors.darkTheme.BACKGROUND,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: vw(45),
+    paddingHorizontal: vw(20),
+    overflow: 'hidden',
+    width: vw(DesignWidth),
+    zIndex: 1,
+    elevation: 2,
+  },
+  secondaryContainer: {
     backgroundColor: colors.darkTheme.BACKGROUND,
     flexDirection: 'row',
     alignItems: 'center',

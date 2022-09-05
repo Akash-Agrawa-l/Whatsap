@@ -6,4 +6,5 @@ export default{
     HOME_SCREEN: 'Homescreen',
     INBOX: 'Inbox',
     PROFILE: 'Profile',
+    ADD_CHAT: 'Add_Chat',
 }

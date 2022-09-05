@@ -21,13 +21,11 @@ import {
 } from '../../../utils/dimensions';
 import CustomHeader from '../../../components/header';
 import {colors} from '../../../utils/colors';
-import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import screenNames from '../../../utils/screenNames';
 import {useDispatch, useSelector} from 'react-redux';
 import localimages from '../../../utils/localimages';
 import strings from '../../../utils/strings';
-import {BlurView} from '@react-native-community/blur';
 import AddButton from '../../../components/addbutton';
 import Story from '../../../components/storycomponent';
 
@@ -39,17 +37,6 @@ export function HomeScreen({navigation}) {
   const [allUsers, updateAllUsers] = useState([]);
   const [previewImage, toggleImage] = useState(null);
   const preview = useState(new Animated.Value(0))[0];
-
-  const animation = {
-    transform: [
-      {
-        scale: preview.interpolate({
-          inputRange: [0, 1],
-          outputRange: [0, 1.03],
-        }),
-      },
-    ],
-  };
 
   useEffect(() => {
     // firestore()
@@ -142,7 +129,7 @@ export function HomeScreen({navigation}) {
       <CustomHeader />
       <Text style={styles.recentText}>{strings.RECENT}</Text>
       <View style={styles.recentUsers}>
-        <Story/>
+        <Story  />
       </View>
       <View style={styles.listContainer}>
         <FlatList
@@ -173,7 +160,9 @@ const styles = StyleSheet.create({
   },
   recentUsers: {
     height: vw(105),
-    justifyContent: 'center',
+    // justifyContent: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   listContainer: {
     height: Platform.OS == 'ios' ? vh(620) : vw(620),

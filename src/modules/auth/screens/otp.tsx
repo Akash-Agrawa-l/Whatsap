@@ -42,7 +42,7 @@ export default function Verification({navigation}: any) {
 
   const onSubmit = async () => {
     try {
-      await confirm.confirm(otp).then((resp: any) => {
+      const confirmation = await confirm.confirm(otp).then((resp: any) => {
         console.log('onSubmit response', resp);
         dispatch({type: 'signIn', payload: resp?.user?._user});
         {

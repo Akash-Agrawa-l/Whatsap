@@ -35,6 +35,8 @@ export function LoginScreen({navigation}) {
     ],
   };
 
+  console.log(number)
+
   useEffect(() => {
     Animated.timing(slide, {
       toValue: 100,
@@ -47,20 +49,25 @@ export function LoginScreen({navigation}) {
     setnumber(text);
   };
 
-
   const submitHandler = async () => {
-    try{
-    let confirm: any = await auth()
-      .signInWithPhoneNumber(`+91${number}`, false)
-      console.log('Otp Sent',confirm)
-    navigation.replace(screenNames.VERIFY, {
-      phoneNumber: `+91${number}`,
-      confirm: confirm,
-    });
-  } catch{
-    console.log('Error Occured')
-  }
-
+    try {
+      let confirm: any = await auth()
+        .signInWithPhoneNumber(`+91${number}`, false)
+        .then(() => {
+          console.log('resp');
+          console.log('Otp Sent', confirm);
+        })
+        .catch(() => {
+          console.log('error');
+        });
+        if(confirm)
+      {navigation.replace(screenNames.VERIFY, {
+        phoneNumber: `+91${number}`,
+        confirm: confirm,
+      });}
+    } catch {
+      console.log('Error Occured');
+    }
   };
 
   return (

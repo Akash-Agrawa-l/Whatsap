@@ -30,9 +30,25 @@ export function Profile({uid,navigation}: profileProps) {
   const {Auth_Data} = useSelector((store: any) => store.authReducer);
   const {User_Data} = useSelector((store: any) => store.authReducer);
   let Uid = uid ? uid : Auth_Data?.uid;
-  const [user, setUser]: any = useState(User_Data);
+  const [user, setUser]: any = useState();
   const [image, setImage] = useState('');
   const dispatch = useDispatch()
+  console.log('profile Data',User_Data)
+
+  useEffect(()=>{
+    firestore()
+      .collection('Users')
+      .where('uid', '==', Auth_Data?.uid)
+      .get()
+      .then((res: any) => {
+        let users = res?._docs?.map((item: any) => {
+          return item._data;
+        });
+        console.log('set_data',users[0]);
+        dispatch({type: 'Set_Data', payload: users[0]});
+        setUser(users[0])
+      });
+  },[])
 
   const sucessCallback=(resp:any)=>{
     console.log(resp.secure_url);
@@ -92,7 +108,7 @@ export function Profile({uid,navigation}: profileProps) {
       <CustomHeader name={`${user?.Name}${strings.PROFILE_HEADER}`} logout={signOut} />
       <View style={styles.profileImageView}>
         <Image
-          source={image == '' ? localimages.PLACEHOLDER : {uri: image}}
+          source={user?.display.includes('cloudinary') ? {uri: user?.display} : localimages.PLACEHOLDER }
           style={styles.profileImage}
         />
         <TouchableOpacity onPress={imagePicker} style={styles.editButton}>

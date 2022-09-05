@@ -20,5 +20,5 @@ export default {
     GO_BACK: 'Profile Image',
     LOGOUT: 'LogOut',
     NEW_CHAT: 'New Chat',
-    STATUS: 'Status',
+    STATUS: 'Add Status',
 }

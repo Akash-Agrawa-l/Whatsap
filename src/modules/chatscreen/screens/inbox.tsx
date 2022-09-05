@@ -32,7 +32,7 @@ export function Inbox({route}: any) {
   const {Auth_Data} = useSelector((store: any) => store.authReducer);
   const {User_Data} = useSelector((store: any) => store.profileReducer);
   let UserId = Auth_Data?.uid;
-  const [userStatus, setuserStatus] = useState('');
+  const [userStatus, setuserStatus] = useState(false);
   const [isTyping, setisTyping] = useState<boolean>(false);
   const [getTypingStatus, setgetTypingStatus] = useState(false);
   const docid = UID > UserId ? UserId + '-' + UID : UID + '-' + UserId;
@@ -46,6 +46,7 @@ export function Inbox({route}: any) {
       .collection('messages')
       .orderBy('createdAt', 'desc')
       .onSnapshot(documentSnapshot => {
+        handleRead()
         const allmsg = documentSnapshot.docs.map(item => {
           return item.data();
         });
@@ -92,6 +93,10 @@ export function Inbox({route}: any) {
     messagesArray[0].createdAt = new Date().getTime();
     const mymsg = {
       ...msg,
+      fromUserID: UserId,
+      received: false,
+      sent: true,
+      toUserID: UID,
       createdAt: new Date().getTime(),
     };
     setMessages(previousMessages => GiftedChat.append(previousMessages, mymsg));
@@ -180,6 +185,7 @@ export function Inbox({route}: any) {
       <View>
         <InputToolbar
           {...props}
+          
           containerStyle={{
             marginHorizontal: normalize(10),
             borderRadius: normalize(30),
@@ -195,9 +201,24 @@ export function Inbox({route}: any) {
     );
   };
 
+  const handleRead = async () => {
+    const validate = await firestore()
+      .collection('chatrooms')
+      .doc(docid)
+      .collection('messages')
+      .get();
+    const batch = firestore()?.batch();
+    validate.forEach((documentSnapshot: any) => {
+      if (documentSnapshot?._data.toUserID === UserId) {
+        batch.update(documentSnapshot.ref, {received: true});
+      }
+    });
+    return batch.commit();
+  };
+
   return (
     <View style={styles.mainContainer}>
-      <ChatHeader status={status} name={Name} pic={pic} />
+      <ChatHeader status={userStatus} name={Name} pic={pic} route={route} />
       <SafeAreaView>
         {/* <Image source={localimages.LANDING_BG} style={styles.backGroundImage} /> */}
       </SafeAreaView>
@@ -209,6 +230,7 @@ export function Inbox({route}: any) {
           return (
             <Bubble
               {...props}
+              tickStyle={{color: colors.WHITE,marginRight: vw(-6),}}
               wrapperStyle={{
                 left: {backgroundColor: colors.LEFT_BUBBLE},
                 right: {backgroundColor: colors.RIGHT_BUBBLE},
@@ -234,6 +256,7 @@ export function Inbox({route}: any) {
           _id: UserId,
         }}
         onSend={onSend}
+        // alwaysShowSend={true}
         // renderInputToolbar={renderComposer}
         isTyping={getTypingStatus}
       />

@@ -14,18 +14,20 @@ import {screenWidth, vw} from '../utils/dimensions';
 import localimages from '../utils/localimages';
 import fonts from '../utils/fonts';
 import strings from '../utils/strings';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 interface headerProps {
   status: boolean;
   name: string;
   pic: any;
+  route: any,
 }
 
-export default function ChatHeader({status, name, pic}: headerProps) {
+export default function ChatHeader({status, name, pic, route}: headerProps) {
   const [searchVisible, toggleSearch] = useState(false);
   const animation = useState(new Animated.Value(0))[0];
   const navigation = useNavigation()
+  console.log('chat params',route)
 
   const toggleStyle = {
     transform: [
@@ -59,7 +61,7 @@ export default function ChatHeader({status, name, pic}: headerProps) {
   return (
     <SafeAreaView>
       <View style={styles.mainContainer}>
-          <TouchableOpacity onPress={()=>navigation.goBack()}>
+          <TouchableOpacity onPress={()=>navigation.popToTop()}>
         <Image source={localimages.GOBACK} style={styles.backButton} />
         </TouchableOpacity>
         <View style={styles.shadowBox}>

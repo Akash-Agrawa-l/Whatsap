@@ -1,6 +1,7 @@
 import {
   Animated,
   Image,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -8,14 +9,18 @@ import {
 } from 'react-native';
 import React, {useRef, useState} from 'react';
 import {colors} from '../utils/colors';
-import {vw} from '../utils/dimensions';
+import {vh, vw} from '../utils/dimensions';
 import localimages from '../utils/localimages';
 import fonts from '../utils/fonts';
 import strings from '../utils/strings';
+import {useNavigation} from '@react-navigation/native';
+import screenNames from '../utils/screenNames';
+import {openCamera} from 'react-native-image-crop-picker';
 
 export default function AddButton() {
   const animatePlus = useRef(new Animated.Value(0)).current;
   const [selected, setSelected] = useState(false);
+  const navigation = useNavigation();
 
   const rotateStyle = {
     transform: [
@@ -62,14 +67,37 @@ export default function AddButton() {
     }
   };
 
+  const onAddStatus = async () => {
+    try {
+      let response = openCamera({
+        height: vw(712),
+        width: vw(375),
+        cropping: true,
+      })
+        .then(resp => {
+          console.log('on camera open', resp);
+        })
+        .catch(err => {
+          console.log('error in opening camera', err);
+        });
+    } catch (error) {
+      console.log('error in opening camera');
+    }
+  };
+
   return (
     <Animated.View style={styles.mainContainer}>
       <Animated.View style={[styles.optionsContainer, animateOptions]}>
-        <TouchableOpacity style={styles.bubble}>
+        <TouchableOpacity style={styles.bubble} onPress={onAddStatus}>
           <Image source={localimages.STORY} style={styles.bubbleIcon} />
           <Text style={styles.bubbleText}>{strings.STATUS}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.bubble}>
+        <TouchableOpacity
+          style={styles.bubble}
+          onPress={() => {
+            // @ts-ignore
+            navigation.navigate(screenNames.ADD_CHAT);
+          }}>
           <Image source={localimages.CHAT} style={styles.bubbleIcon} />
           <Text style={styles.bubbleText}>{strings.NEW_CHAT}</Text>
         </TouchableOpacity>
@@ -90,7 +118,7 @@ export default function AddButton() {
 const styles = StyleSheet.create({
   mainContainer: {
     position: 'absolute',
-    bottom: vw(40),
+    bottom: Platform.OS == 'android' ? vh(70) : vw(40),
     right: vw(30),
   },
   addButton: {

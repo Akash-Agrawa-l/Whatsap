@@ -34,6 +34,7 @@ export function SplashScreen({navigation}: any) {
       useNativeDriver: true,
     }).start();
 
+    if(Auth_Data?.uid){
     firestore()
       .collection('Users')
       .where('uid', '==', Auth_Data?.uid)
@@ -44,7 +45,9 @@ export function SplashScreen({navigation}: any) {
         });
         console.log(users[0]);
         dispatch({type: 'Set_Data', payload: users[0]});
-      });
+      }).catch(()=>{
+        console.log('error')
+      })}
   }, []);
 
   useEffect(() => {
