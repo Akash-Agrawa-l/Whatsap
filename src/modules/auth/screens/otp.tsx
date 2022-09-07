@@ -59,8 +59,8 @@ export default function Verification({navigation}: any) {
                     return item._data;
                   });
                   dispatch({type: 'Set_Data', payload: users[0]});
+                  navigation.replace(screenNames.HOME_SCREEN);
                 });
-          navigation.replace(screenNames.HOME_SCREEN);
         }
       });
     } catch (error) {

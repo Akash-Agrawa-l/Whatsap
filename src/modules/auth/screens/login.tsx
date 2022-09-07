@@ -17,6 +17,7 @@ import {colors} from '../../../utils/colors';
 import strings from '../../../utils/strings';
 import TextInputWithPlaceholder from '../../../components/textinputwithplaceholder';
 import screenNames from '../../../utils/screenNames';
+import fonts from '../../../utils/fonts';
 
 // @ts-ignore
 export function LoginScreen({navigation}) {
@@ -35,7 +36,7 @@ export function LoginScreen({navigation}) {
     ],
   };
 
-  console.log(number)
+  console.log(number);
 
   useEffect(() => {
     Animated.timing(slide, {
@@ -53,18 +54,21 @@ export function LoginScreen({navigation}) {
     try {
       let confirm: any = await auth()
         .signInWithPhoneNumber(`+91${number}`, false)
-        .then(() => {
-          console.log('resp');
-          console.log('Otp Sent', confirm);
+        .then((resp) => {
+          console.log('resp',resp);
+          navigation.replace(screenNames.VERIFY, {
+            phoneNumber: `+91${number}`,
+            confirm: resp,
+          });
         })
-        .catch(() => {
-          console.log('error');
+        .catch(error => {
+          console.log('error', error);
         });
-        if(confirm)
-      {navigation.replace(screenNames.VERIFY, {
-        phoneNumber: `+91${number}`,
-        confirm: confirm,
-      });}
+      // navigation.replace(screenNames.VERIFY, {
+      //   phoneNumber: `+91${number}`,
+      //   confirm: confirm,
+      // });
+      
     } catch {
       console.log('Error Occured');
     }
@@ -124,12 +128,13 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: vw(23),
     color: colors.darkTheme.TEXT,
-    fontWeight: '600',
+    fontFamily: fonts.SEMIBOLD,
     alignSelf: 'center',
   },
   subHeadText: {
     fontSize: vw(13),
     color: colors.darkTheme.TEXT,
+    fontFamily: fonts.REGULAR,
     alignSelf: 'center',
     marginVertical: vw(10),
   },
@@ -147,6 +152,8 @@ const styles = StyleSheet.create({
   },
   submitButtonText: {
     color: colors.darkTheme.TEXT,
+    fontFamily: fonts.REGULAR,
+    lineHeight: vw(20),
     fontSize: vw(16),
   },
   inputContainerStyle: {

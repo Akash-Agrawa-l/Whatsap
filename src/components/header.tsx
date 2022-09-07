@@ -22,9 +22,11 @@ import screenNames from '../utils/screenNames';
 interface headerProps {
   name?: string;
   logout?: any;
+  onSearch?: any;
 }
 
-export default function CustomHeader({name, logout}: headerProps) {
+
+export default function CustomHeader({name, logout, onSearch}: headerProps) {
   const navigation = useNavigation();
   const route = useRoute();
   const animation = useState(new Animated.Value(0))[0];
@@ -71,7 +73,7 @@ export default function CustomHeader({name, logout}: headerProps) {
   return (
     <SafeAreaView>
       {route.name != screenNames.PROFILE ? (
-        <View style={[styles.mainContainer, {marginTop: Platform.OS == 'android' ? vw(140) : vw(height)}]}>
+        <View style={[styles.mainContainer, {marginTop: vw(height)}]}>
           {route.name == screenNames.ADD_CHAT ? (
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Image source={localimages.GOBACK} style={styles.backButton} />
@@ -97,6 +99,7 @@ export default function CustomHeader({name, logout}: headerProps) {
                 style={styles.searchInput}
                 placeholder={strings.SEARCH}
                 placeholderTextColor={colors.WHITE_30}
+                onChangeText={onSearch}
                 autoCorrect={false}
                 autoComplete="off"
                 autoCapitalize="none"

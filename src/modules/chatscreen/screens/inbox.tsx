@@ -247,11 +247,13 @@ export function Inbox({route}: any) {
                   color: colors.WHITE,
                 },
               }}
+              
             />
           );
         }}
         wrapInSafeArea={Platform.OS == 'android'}
         messages={messages}
+        alwaysShowSend={true}
         user={{
           _id: UserId,
         }}

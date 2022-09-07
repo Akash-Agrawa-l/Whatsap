@@ -9,6 +9,8 @@ export const uploadImage = (image: any,success:any) => {
   upload.append('upload_preset', 'Whatsapp_Images');
   upload.append('api_key', 687967117332317);
   upload.append('timestamp', (Date.now() / 1000) | 0);
+  upload.append('hieght', 150);
+  upload.append('width', 150);
 
   console.log('action called', upload);
 
@@ -18,7 +20,8 @@ export const uploadImage = (image: any,success:any) => {
       })
       .then(resp => {
         console.log('uploaded', resp);
-        success(resp.data)
+        let url = resp?.data?.secure_url.split('upload/').join('upload/w_150,h_150,c_fill/')
+        success(url)
       })
       .catch(err => {
         console.log('erropr occured', err);

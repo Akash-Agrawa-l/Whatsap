@@ -78,32 +78,34 @@ export function CreateProfile({navigation, route}: any) {
   };
 
   const sucessCallback=(resp:any)=>{
-    console.log(resp.secure_url);
-    setImage(resp?.secure_url)
-    firestore()
-      .collection('Users')
-      .doc(uid)
-      .update({
-        display: resp.secure_url,
-      })
-      .then(res => {
-        console.log('Response is', res);
-      })
-      .catch(err => {
-        console.log('Error is', err);
-      });
+    console.log(resp);
+    setImage(resp)
+    // firestore()
+    //   .collection('Users')
+    //   .doc(uid)
+    //   .update({
+    //     display: resp,
+    //   })
+    //   .then(res => {
+    //     console.log('Response is', res);
+    //   })
+    //   .catch(err => {
+    //     console.log('Error is', err);
+    //   });
     
   }
 
   const imagePicker= async()=>{
     try {
       const image = await ImageCropPicker.openPicker({
+        mediaType: 'photo',
         cropping: true,
         height: 150,
         width: 150,
+        compressImageQuality: 0.4,
       });
       let cloudImage = {
-        uri: image.sourceURL,
+        uri: image.path,
         type: `image/jpg`,
         name: `${uid}.${image.path.includes('jpg')? 'jpg' : 'png'}`,
       }

@@ -3,6 +3,7 @@ import React from 'react';
 import {colors} from '../utils/colors';
 import {vw} from '../utils/dimensions';
 import strings from '../utils/strings';
+import fonts from '../utils/fonts';
 
 interface inputProps {
   onChangeText?: Function|any;
@@ -74,19 +75,21 @@ const styles = StyleSheet.create({
   placeholderText: {
     fontSize: vw(15),
     marginRight: vw(5),
-    fontWeight: '500',
+    fontFamily: fonts.SEMIBOLD,
     width: vw(120),
     color: colors.BLACK,
   },
   countryCodeText: {
     fontSize: vw(15),
     marginRight: vw(5),
-    fontWeight: '500',
+    fontFamily: fonts.SEMIBOLD,
     color: colors.BLACK_70,
   },
   inputStyle: {
     fontSize: vw(15),
     width: vw(150),
     paddingVertical: vw(3),
+    fontFamily: fonts.SEMIBOLD,
+    color: colors.BLACK_70,
   },
 });

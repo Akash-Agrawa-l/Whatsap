@@ -52,15 +52,13 @@ export function HomeScreen({navigation}) {
     //   });
     firestore()
       .collection('Users')
-      .doc(UserId).collection('Inbox')
-      .get()
-      .then((res: any) => {
-        let users = res?._docs?.map((item: any) => {
-          return item._data;
-        });
-
-        updateAllUsers(users);
-      });
+      .doc(UserId)
+      .collection('Inbox')
+      .onSnapshot((ele:any) => {
+        let newArr = ele?._docs?.map((item:any)=>item.data())
+        console.log(newArr)
+        updateAllUsers(newArr)
+      })
   }, []);
 
   useEffect(() => {

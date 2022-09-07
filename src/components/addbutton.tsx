@@ -118,7 +118,7 @@ export default function AddButton() {
 const styles = StyleSheet.create({
   mainContainer: {
     position: 'absolute',
-    bottom: Platform.OS == 'android' ? vh(70) : vw(40),
+    bottom: vh(70),
     right: vw(30),
   },
   addButton: {

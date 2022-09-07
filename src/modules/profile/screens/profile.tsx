@@ -28,10 +28,8 @@ interface profileProps {
 // @ts-ignore
 export function Profile({uid,navigation}: profileProps) {
   const {Auth_Data} = useSelector((store: any) => store.authReducer);
-  const {User_Data} = useSelector((store: any) => store.authReducer);
+  const {User_Data} = useSelector((store: any) => store.profileReducer);
   let Uid = uid ? uid : Auth_Data?.uid;
-  const [user, setUser]: any = useState();
-  const [image, setImage] = useState('');
   const dispatch = useDispatch()
   console.log('profile Data',User_Data)
 
@@ -39,25 +37,19 @@ export function Profile({uid,navigation}: profileProps) {
     firestore()
       .collection('Users')
       .where('uid', '==', Auth_Data?.uid)
-      .get()
-      .then((res: any) => {
-        let users = res?._docs?.map((item: any) => {
-          return item._data;
-        });
-        console.log('set_data',users[0]);
-        dispatch({type: 'Set_Data', payload: users[0]});
-        setUser(users[0])
-      });
+      .onSnapshot((ele:any) => {
+        let newArr = ele?._docs?.map((item:any)=>item._data)
+          dispatch({type: 'Set_Data', payload: newArr[0]});
+      })
   },[])
 
   const sucessCallback=(resp:any)=>{
-    console.log(resp.secure_url);
-    setImage(resp?.secure_url)
+    console.log(resp);
     firestore()
       .collection('Users')
       .doc(Uid)
       .update({
-        display: resp.secure_url,
+        display: resp,
       })
       .then(res => {
         console.log('Response is', res);
@@ -71,13 +63,15 @@ export function Profile({uid,navigation}: profileProps) {
   const imagePicker = async () => {
     try {
       const image = await ImageCropPicker.openPicker({
+        mediaType: 'photo',
         cropping: true,
         height: 150,
         width: 150,
+        compressImageQuality: 0.4,
       });
 
       let cloudImage = {
-        uri: image.sourceURL,
+        uri: image.path,
         type: `image/jpg`,
         name: `${uid}.${image.path.includes('jpg') ? 'jpg' : 'png'}`,
       };
@@ -99,16 +93,10 @@ export function Profile({uid,navigation}: profileProps) {
 
   return (
     <View style={styles.mainContainer}>
-      <StatusBar
-        translucent={false}
-        showHideTransition={'slide'}
-        networkActivityIndicatorVisible={true}
-        backgroundColor={colors.darkTheme.BACKGROUND}
-      />
-      <CustomHeader name={`${user?.Name}${strings.PROFILE_HEADER}`} logout={signOut} />
+      <CustomHeader name={`${User_Data?.Name}${strings.PROFILE_HEADER}`} logout={signOut} />
       <View style={styles.profileImageView}>
         <Image
-          source={user?.display.includes('cloudinary') ? {uri: user?.display} : localimages.PLACEHOLDER }
+          source={User_Data?.display.includes('cloudinary') ? {uri: User_Data?.display} : localimages.PLACEHOLDER }
           style={styles.profileImage}
         />
         <TouchableOpacity onPress={imagePicker} style={styles.editButton}>
@@ -117,7 +105,7 @@ export function Profile({uid,navigation}: profileProps) {
       </View>
       <View style={styles.detailView}>
         <Text style={styles.detailTitle}>{strings.NAME}</Text>
-        <Text style={styles.detailText}>{user?.Name}</Text>
+        <Text style={styles.detailText}>{User_Data?.Name}</Text>
       </View>
       <View style={styles.detailView}>
         <Text style={styles.detailTitle}>{strings.PHONE_NUMBER}</Text>
@@ -125,11 +113,11 @@ export function Profile({uid,navigation}: profileProps) {
       </View>
       <View style={styles.detailView}>
         <Text style={styles.detailTitle}>{strings.EMAIL}</Text>
-        <Text style={styles.detailText}>{user?.Email}</Text>
+        <Text style={styles.detailText}>{User_Data?.Email}</Text>
       </View>
       <View style={styles.detailView}>
         <Text style={styles.detailTitle}>{strings.ABOUT}</Text>
-        <Text style={styles.detailText}>{user?.About}</Text>
+        <Text style={styles.detailText}>{User_Data?.About}</Text>
       </View>
     </View>
   );
