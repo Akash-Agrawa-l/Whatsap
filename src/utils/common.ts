@@ -20,9 +20,7 @@ export const uploadImage = (image: any, success: any) => {
     })
     .then(resp => {
       console.log('uploaded', resp);
-      let url = resp?.data?.secure_url
-        .split('upload/')
-        .join('upload/w_150,h_150,c_fill/');
+      let url = resp?.data?.secure_url;
       success(url);
     })
     .catch(err => {
@@ -41,5 +39,13 @@ export const randomChatID = () => {
     Math.random().toString(36).slice(0, 5) +
     '-' +
     Math.random().toString(36)
+  ).replace(/\./g, '');
+};
+
+export const randomIDGenerator = () => {
+  return (
+    Date.now().toString(36) +
+    '-' +
+    Math.random().toString(36).slice(0, 5)
   ).replace(/\./g, '');
 };

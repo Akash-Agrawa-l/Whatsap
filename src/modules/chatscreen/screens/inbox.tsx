@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
+import ImageCropPicker from 'react-native-image-crop-picker';
 import {useSelector} from 'react-redux';
 import {
   Bubble,
@@ -32,7 +33,11 @@ import ChatHeader from '../../../components/chatHeader';
 import {colors} from '../../../utils/colors';
 import localimages from '../../../utils/localimages';
 import fonts from '../../../utils/fonts';
-import {randomChatID} from '../../../utils/common';
+import {
+  randomChatID,
+  randomIDGenerator,
+  uploadImage,
+} from '../../../utils/common';
 
 export function Inbox({route}: any) {
   const {Name, UID, pic, status, bio} = route.params;
@@ -192,6 +197,46 @@ export function Inbox({route}: any) {
       startTyping();
   };
 
+  const sucessCallback = (resp: any) => {
+    console.log(resp.split('upload/').join('upload/w_1080,h_1080,c_fill/'));
+    let image = resp.split('upload/').join('upload/w_1080,h_1080,c_fill/');
+
+    onSend([
+      {
+        image: image,
+        _id: randomChatID(),
+        createdAt: new Date().getTime(),
+        user: {
+          _id: UserId,
+        },
+        text: '',
+      },
+    ]);
+  };
+
+  const openImagePicker = async () => {
+    try {
+      const image = await ImageCropPicker.openPicker({
+        mediaType: 'photo',
+        cropping: true,
+        height: 1000,
+        width: 1000,
+      });
+
+      let cloudImage = {
+        uri: image.path,
+        type: `image/jpg`,
+        name: `${randomIDGenerator()}.${
+          image.path.includes('jpg') ? 'jpg' : 'png'
+        }`,
+      };
+
+      uploadImage(cloudImage, sucessCallback);
+    } catch (err) {
+      console.log('ImageErr', err);
+    }
+  };
+
   const renderBubble = (props: any) => {
     return (
       <Bubble
@@ -227,12 +272,8 @@ export function Inbox({route}: any) {
 
   const renderIcon = () => {
     return (
-      <View
-        style={styles.iconContainer}>
-        <Image
-          source={localimages.CAMERA}
-          style={styles.cameraIcon}
-        />
+      <View style={styles.iconContainer}>
+        <Image source={localimages.CAMERA} style={styles.cameraIcon} />
       </View>
     );
   };
@@ -241,7 +282,7 @@ export function Inbox({route}: any) {
     return (
       <Actions
         {...props}
-        // onPressActionButton
+        onPressActionButton={openImagePicker}
         icon={renderIcon}
       />
     );
@@ -249,28 +290,27 @@ export function Inbox({route}: any) {
 
   const renderComposer = (props: any) => {
     return (
-      <InputToolbar {...props} containerStyle={styles.inputContainer}>
-        {/* <TouchableOpacity
-          style={{height: vw(100), width: vw(100), backgroundColor: 'red',}}
-          onPress={() => {
-            onSend([
-              {
-                image:
-                  'https://res.cloudinary.com/dezx0edl7/image/upload/w_150,h_150,c_fill/v1662527358/profiles/ylkajgp9btgcquxr5yb0.jpg',
-                  _id:  randomChatID(),
-                  createdAt: new Date().getTime(),
-                  user: {
-                    _id: UserId,
-                  },
-                  text: '',
-              },
-            ]);
-          }} /> */}
-        <Composer
-          {...props}
-          textInputStyle={styles.messageInput}
-        />
-      </InputToolbar>
+      <InputToolbar
+        {...props}
+        containerStyle={styles.inputContainer}
+        textInputStyle={styles.messageInput}
+      />
+      // <TouchableOpacity
+      //   style={{height: vw(100), width: vw(100), backgroundColor: 'red',}}
+      //   onPress={() => {
+      //     onSend([
+      //       {
+      //         image:
+      //           'https://res.cloudinary.com/dezx0edl7/image/upload/w_150,h_150,c_fill/v1662527358/profiles/ylkajgp9btgcquxr5yb0.jpg',
+      //           _id:  randomChatID(),
+      //           createdAt: new Date().getTime(),
+      //           user: {
+      //             _id: UserId,
+      //           },
+      //           text: '',
+      //       },
+      //     ]);
+      //   }} />
     );
   };
 
@@ -340,9 +380,10 @@ const styles = StyleSheet.create({
     width: vw(35),
   },
   messageInput: {
-    backgroundColor: colors.TRANSPARENT,
-    borderWidth: 1,
     color: colors.WHITE,
+    fontSize: vw(16),
+    lineHeight: vw(22),
+    fontFamily: fonts.REGULAR,
   },
   inputContainer: {
     marginHorizontal: normalize(10),

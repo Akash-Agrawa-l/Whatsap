@@ -49,7 +49,8 @@ export function Profile({uid,navigation}: profileProps) {
       .collection('Users')
       .doc(Uid)
       .update({
-        display: resp,
+        display: resp.split('upload/')
+        .join('upload/w_150,h_150,c_fill/'),
       })
       .then(res => {
         console.log('Response is', res);
