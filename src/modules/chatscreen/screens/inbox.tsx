@@ -7,12 +7,20 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import {useSelector} from 'react-redux';
-import {Bubble, GiftedChat, InputToolbar} from 'react-native-gifted-chat';
+import {
+  Bubble,
+  GiftedChat,
+  InputToolbar,
+  Send,
+  Composer,
+  Actions,
+} from 'react-native-gifted-chat';
 
 import {
   normalize,
@@ -24,6 +32,7 @@ import ChatHeader from '../../../components/chatHeader';
 import {colors} from '../../../utils/colors';
 import localimages from '../../../utils/localimages';
 import fonts from '../../../utils/fonts';
+import {randomChatID} from '../../../utils/common';
 
 export function Inbox({route}: any) {
   const {Name, UID, pic, status, bio} = route.params;
@@ -46,7 +55,7 @@ export function Inbox({route}: any) {
       .collection('messages')
       .orderBy('createdAt', 'desc')
       .onSnapshot(documentSnapshot => {
-        handleRead()
+        handleRead();
         const allmsg = documentSnapshot.docs.map(item => {
           return item.data();
         });
@@ -68,8 +77,10 @@ export function Inbox({route}: any) {
         console.log(documentSnapshot.data().isActive);
         setuserStatus(documentSnapshot.data().isActive);
       });
+      getAllmsg();
     return subscribe;
   }, []);
+
   const getAllmsg = async () => {
     const querySanp = await firestore()
       .collection('chatrooms')
@@ -84,11 +95,12 @@ export function Inbox({route}: any) {
     setMessages(allmsg);
   };
 
-  useEffect(() => {
-    getAllmsg();
-  }, []);
+  // useEffect(() => {
+  //   getAllmsg();
+  // }, []);
 
   const onSend = (messagesArray: any) => {
+    console.log('messages', messagesArray);
     const msg = messagesArray[0];
     messagesArray[0].createdAt = new Date().getTime();
     const mymsg = {
@@ -98,6 +110,7 @@ export function Inbox({route}: any) {
       sent: true,
       toUserID: UID,
       createdAt: new Date().getTime(),
+      // image: "https://res.cloudinary.com/dezx0edl7/image/upload/w_150,h_150,c_fill/v1662527358/profiles/ylkajgp9btgcquxr5yb0.jpg",
     };
     setMessages(previousMessages => GiftedChat.append(previousMessages, mymsg));
 
@@ -121,7 +134,10 @@ export function Inbox({route}: any) {
           display: pic,
           uid: UID,
           About: bio,
-        }).then((res)=>{console.log('response',res)})
+        })
+        .then(res => {
+          console.log('response', res);
+        });
 
       firestore()
         .collection('Users')
@@ -158,8 +174,7 @@ export function Inbox({route}: any) {
   }, [isTyping]);
 
   const debounce = useCallback((fun: any, timeout: any) => {
-    //@ts-ignore
-    let timer;
+    let timer: any;
     return (args: any) => {
       //@ts-ignore
       clearTimeout(timer);
@@ -180,24 +195,103 @@ export function Inbox({route}: any) {
       startTyping();
   };
 
-  const renderComposer = (props: any) => {
+  const renderBubble=(props:any) => {
     return (
-      <View>
-        <InputToolbar
-          {...props}
-          
-          containerStyle={{
-            marginHorizontal: normalize(10),
-            borderRadius: normalize(30),
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: colors.TRANSPARENT,
-            bottom: 0,
-            borderTopWidth: 0,
+      <Bubble
+        {...props}
+        tickStyle={{color: colors.WHITE, marginRight: vw(-6)}}
+        wrapperStyle={{
+          left: {backgroundColor: colors.LEFT_BUBBLE},
+          right: {backgroundColor: colors.RIGHT_BUBBLE},
+        }}
+        textStyle={{
+          left: {
+            fontFamily: fonts.REGULAR,
+            fontSize: vw(13),
+            color: colors.WHITE,
+          },
+          right: {
+            fontFamily: fonts.REGULAR,
+            fontSize: vw(13),
+            color: colors.WHITE,
+          },
+        }}
+      />
+    );
+  }
+
+  const renderIcon=() => {
+    return (
+      <View
+        style={{
+          borderRadius: vw(20),
+          height: vw(33),
+          width: vw(33),
+          marginTop: vw(-3),
+          marginLeft: vw(-4),
+          backgroundColor: colors.CAMERA_ICON,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Image
+          source={localimages.CAMERA}
+          style={{
+            height: vw(18),
+            width: vw(22),
+            resizeMode: 'contain',
+            marginTop: vw(-3),
           }}
-          primaryStyle={{backgroundColor: colors.BLACK_10}}
         />
       </View>
+    );
+  }
+
+  const renderAction=(props:any)=>{
+    return (
+      <Actions
+        {...props}
+        // onPressActionButton
+        icon={renderIcon}
+        />
+    )
+  }
+
+  const renderComposer = (props: any) => {
+    return (
+      <InputToolbar
+        {...props}
+        containerStyle={{
+          marginHorizontal: normalize(10),
+          borderRadius: normalize(30),
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: colors.INPUT_BACKGROUND,
+          bottom: 0,
+          borderTopWidth: 0,
+        }}>
+        {/* <TouchableOpacity
+          style={{height: vw(10), width: vw(10), backgroundColor: 'red',}}
+          onPress={() => {
+            onSend([
+              {
+                image:
+                  'https://res.cloudinary.com/dezx0edl7/image/upload/w_150,h_150,c_fill/v1662527358/profiles/ylkajgp9btgcquxr5yb0.jpg',
+                  _id:  randomChatID(),
+                  createdAt: new Date().getTime(),
+                  user: {
+                    _id: UserId,
+                  },
+                  text: '',
+              },
+            ]);
+          }} /> */}
+        <Composer
+          {...props}
+          disableComposer={false}
+
+          // textInputStyle={styles.messageInput}
+        />
+      </InputToolbar>
     );
   };
 
@@ -226,40 +320,25 @@ export function Inbox({route}: any) {
         isKeyboardInternallyHandled={true}
         infiniteScroll={true}
         onInputTextChanged={findtyping}
-        renderBubble={props => {
+        renderActions={renderAction}
+        renderSend={(props: any) => {
           return (
-            <Bubble
-              {...props}
-              tickStyle={{color: colors.WHITE,marginRight: vw(-6),}}
-              wrapperStyle={{
-                left: {backgroundColor: colors.LEFT_BUBBLE},
-                right: {backgroundColor: colors.RIGHT_BUBBLE},
-              }}
-              textStyle={{
-                left: {
-                  fontFamily: fonts.REGULAR,
-                  fontSize: vw(13),
-                  color: colors.WHITE,
-                },
-                right: {
-                  fontFamily: fonts.REGULAR,
-                  fontSize: vw(13),
-                  color: colors.WHITE,
-                },
-              }}
-              
-            />
+            <Send {...props}>
+              <Image source={localimages.SEND} style={styles.sendIcon} />
+            </Send>
           );
         }}
+        renderBubble={renderBubble}
+        timeTextStyle={{left: {fontSize: vw(9)}, right: {fontSize: vw(9)}}}
         wrapInSafeArea={Platform.OS == 'android'}
         messages={messages}
         alwaysShowSend={true}
         user={{
           _id: UserId,
         }}
+        placeholder={'Message'}
         onSend={onSend}
-        // alwaysShowSend={true}
-        // renderInputToolbar={renderComposer}
+        renderInputToolbar={renderComposer}
         isTyping={getTypingStatus}
       />
       <SafeAreaView>
@@ -282,5 +361,14 @@ const styles = StyleSheet.create({
   },
   footerView: {
     height: vw(1),
+  },
+  sendIcon: {
+    height: vw(40),
+    width: vw(40),
+  },
+  messageInput: {
+    backgroundColor: colors.INPUT_BACKGROUND,
+    borderWidth: 1,
+    color: colors.WHITE,
   },
 });

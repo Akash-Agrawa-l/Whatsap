@@ -12,4 +12,6 @@ export default {
     ADD: require(`${fixedPath}/plus.png`),
     STORY: require(`${fixedPath}/story.png`),
     CHAT: require(`${fixedPath}/chat.png`),
+    SEND: require(`${fixedPath}/send.png`),
+    CAMERA: require(`${fixedPath}/camera.png`),
 }
