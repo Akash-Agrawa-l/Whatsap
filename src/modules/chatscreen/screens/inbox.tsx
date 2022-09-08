@@ -45,6 +45,7 @@ export function Inbox({route}: any) {
   const [isTyping, setisTyping] = useState<boolean>(false);
   const [getTypingStatus, setgetTypingStatus] = useState(false);
   const docid = UID > UserId ? UserId + '-' + UID : UID + '-' + UserId;
+  const timeText = {left: {fontSize: vw(9)}, right: {fontSize: vw(9)}};
 
   console.log('userData', User_Data);
 
@@ -77,7 +78,7 @@ export function Inbox({route}: any) {
         console.log(documentSnapshot.data().isActive);
         setuserStatus(documentSnapshot.data().isActive);
       });
-      getAllmsg();
+    getAllmsg();
     return subscribe;
   }, []);
 
@@ -94,10 +95,6 @@ export function Inbox({route}: any) {
     //@ts-ignore
     setMessages(allmsg);
   };
-
-  // useEffect(() => {
-  //   getAllmsg();
-  // }, []);
 
   const onSend = (messagesArray: any) => {
     console.log('messages', messagesArray);
@@ -173,13 +170,13 @@ export function Inbox({route}: any) {
       });
   }, [isTyping]);
 
-  const debounce = useCallback((fun: any, timeout: any) => {
+  const debounce = useCallback((func: any, timeout: any) => {
     let timer: any;
     return (args: any) => {
       //@ts-ignore
       clearTimeout(timer);
       timer = setTimeout(() => {
-        fun(false);
+        func(false);
       }, timeout);
       setisTyping(true);
     };
@@ -195,7 +192,7 @@ export function Inbox({route}: any) {
       startTyping();
   };
 
-  const renderBubble=(props:any) => {
+  const renderBubble = (props: any) => {
     return (
       <Bubble
         {...props}
@@ -218,59 +215,43 @@ export function Inbox({route}: any) {
         }}
       />
     );
-  }
+  };
 
-  const renderIcon=() => {
+  const renderSend = (props: any) => {
+    return (
+      <Send {...props}>
+        <Image source={localimages.SEND} style={styles.sendIcon} />
+      </Send>
+    );
+  };
+
+  const renderIcon = () => {
     return (
       <View
-        style={{
-          borderRadius: vw(20),
-          height: vw(33),
-          width: vw(33),
-          marginTop: vw(-3),
-          marginLeft: vw(-4),
-          backgroundColor: colors.CAMERA_ICON,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
+        style={styles.iconContainer}>
         <Image
           source={localimages.CAMERA}
-          style={{
-            height: vw(18),
-            width: vw(22),
-            resizeMode: 'contain',
-            marginTop: vw(-3),
-          }}
+          style={styles.cameraIcon}
         />
       </View>
     );
-  }
+  };
 
-  const renderAction=(props:any)=>{
+  const renderAction = (props: any) => {
     return (
       <Actions
         {...props}
         // onPressActionButton
         icon={renderIcon}
-        />
-    )
-  }
+      />
+    );
+  };
 
   const renderComposer = (props: any) => {
     return (
-      <InputToolbar
-        {...props}
-        containerStyle={{
-          marginHorizontal: normalize(10),
-          borderRadius: normalize(30),
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: colors.INPUT_BACKGROUND,
-          bottom: 0,
-          borderTopWidth: 0,
-        }}>
+      <InputToolbar {...props} containerStyle={styles.inputContainer}>
         {/* <TouchableOpacity
-          style={{height: vw(10), width: vw(10), backgroundColor: 'red',}}
+          style={{height: vw(100), width: vw(100), backgroundColor: 'red',}}
           onPress={() => {
             onSend([
               {
@@ -287,9 +268,7 @@ export function Inbox({route}: any) {
           }} /> */}
         <Composer
           {...props}
-          disableComposer={false}
-
-          // textInputStyle={styles.messageInput}
+          textInputStyle={styles.messageInput}
         />
       </InputToolbar>
     );
@@ -313,23 +292,17 @@ export function Inbox({route}: any) {
   return (
     <View style={styles.mainContainer}>
       <ChatHeader status={userStatus} name={Name} pic={pic} route={route} />
-      <SafeAreaView>
-        {/* <Image source={localimages.LANDING_BG} style={styles.backGroundImage} /> */}
-      </SafeAreaView>
+      {/* <SafeAreaView>
+        <Image source={localimages.LANDING_BG} style={styles.backGroundImage} />
+      </SafeAreaView> */}
       <GiftedChat
         isKeyboardInternallyHandled={true}
         infiniteScroll={true}
         onInputTextChanged={findtyping}
         renderActions={renderAction}
-        renderSend={(props: any) => {
-          return (
-            <Send {...props}>
-              <Image source={localimages.SEND} style={styles.sendIcon} />
-            </Send>
-          );
-        }}
+        renderSend={renderSend}
         renderBubble={renderBubble}
-        timeTextStyle={{left: {fontSize: vw(9)}, right: {fontSize: vw(9)}}}
+        timeTextStyle={timeText}
         wrapInSafeArea={Platform.OS == 'android'}
         messages={messages}
         alwaysShowSend={true}
@@ -363,12 +336,37 @@ const styles = StyleSheet.create({
     height: vw(1),
   },
   sendIcon: {
-    height: vw(40),
-    width: vw(40),
+    height: vw(35),
+    width: vw(35),
   },
   messageInput: {
-    backgroundColor: colors.INPUT_BACKGROUND,
+    backgroundColor: colors.TRANSPARENT,
     borderWidth: 1,
     color: colors.WHITE,
+  },
+  inputContainer: {
+    marginHorizontal: normalize(10),
+    borderRadius: normalize(30),
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.INPUT_BACKGROUND,
+    bottom: 0,
+    borderTopWidth: 0,
+  },
+  iconContainer: {
+    borderRadius: vw(20),
+    height: vw(33),
+    width: vw(33),
+    marginTop: vw(-3),
+    marginLeft: vw(-4),
+    backgroundColor: colors.CAMERA_ICON,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cameraIcon: {
+    height: vw(18),
+    width: vw(22),
+    resizeMode: 'contain',
+    marginTop: vw(-3),
   },
 });
