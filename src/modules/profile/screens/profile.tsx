@@ -97,7 +97,7 @@ export function Profile({uid,navigation}: profileProps) {
       <CustomHeader name={`${User_Data?.Name}${strings.PROFILE_HEADER}`} logout={signOut} />
       <View style={styles.profileImageView}>
         <Image
-          source={User_Data?.display.includes('cloudinary') ? {uri: User_Data?.display} : localimages.PLACEHOLDER }
+          source={User_Data?.display?.includes('cloudinary') ? {uri: User_Data?.display} : localimages.PLACEHOLDER }
           style={styles.profileImage}
         />
         <TouchableOpacity onPress={imagePicker} style={styles.editButton}>

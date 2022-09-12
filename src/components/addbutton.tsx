@@ -70,7 +70,7 @@ export default function AddButton() {
   const onAddStatus = async () => {
     try {
       let response = openCamera({
-        height: vw(712),
+        height: vw(720),
         width: vw(375),
         cropping: true,
       })

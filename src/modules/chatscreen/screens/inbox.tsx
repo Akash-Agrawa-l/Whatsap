@@ -1,7 +1,5 @@
 import {
   Image,
-  ImageBackground,
-  KeyboardAvoidingView,
   Platform,
   SafeAreaView,
   StyleSheet,
@@ -19,7 +17,6 @@ import {
   GiftedChat,
   InputToolbar,
   Send,
-  Composer,
   Actions,
 } from 'react-native-gifted-chat';
 
@@ -42,17 +39,15 @@ import {
 export function Inbox({route}: any) {
   const {Name, UID, pic, status, bio} = route.params;
 
-  const [messages, setMessages] = useState([]);
   const {Auth_Data} = useSelector((store: any) => store.authReducer);
   const {User_Data} = useSelector((store: any) => store.profileReducer);
   let UserId = Auth_Data?.uid;
+  const [messages, setMessages] = useState([]);
   const [userStatus, setuserStatus] = useState(false);
   const [isTyping, setisTyping] = useState<boolean>(false);
   const [getTypingStatus, setgetTypingStatus] = useState(false);
   const docid = UID > UserId ? UserId + '-' + UID : UID + '-' + UserId;
   const timeText = {left: {fontSize: vw(9)}, right: {fontSize: vw(9)}};
-
-  console.log('userData', User_Data);
 
   useEffect(() => {
     const subscribe = firestore()
@@ -198,7 +193,6 @@ export function Inbox({route}: any) {
   };
 
   const sucessCallback = (resp: any) => {
-    console.log(resp.split('upload/').join('upload/w_1080,h_1080,c_fill/'));
     let image = resp.split('upload/').join('upload/w_1080,h_1080,c_fill/');
 
     onSend([
@@ -217,11 +211,13 @@ export function Inbox({route}: any) {
   const openImagePicker = async () => {
     try {
       const image = await ImageCropPicker.openPicker({
-        mediaType: 'photo',
+        mediaType: 'photo'||'video',
         cropping: true,
         height: 1000,
         width: 1000,
       });
+
+      console.log('image response', image);
 
       let cloudImage = {
         uri: image.path,
@@ -295,22 +291,6 @@ export function Inbox({route}: any) {
         containerStyle={styles.inputContainer}
         textInputStyle={styles.messageInput}
       />
-      // <TouchableOpacity
-      //   style={{height: vw(100), width: vw(100), backgroundColor: 'red',}}
-      //   onPress={() => {
-      //     onSend([
-      //       {
-      //         image:
-      //           'https://res.cloudinary.com/dezx0edl7/image/upload/w_150,h_150,c_fill/v1662527358/profiles/ylkajgp9btgcquxr5yb0.jpg',
-      //           _id:  randomChatID(),
-      //           createdAt: new Date().getTime(),
-      //           user: {
-      //             _id: UserId,
-      //           },
-      //           text: '',
-      //       },
-      //     ]);
-      //   }} />
     );
   };
 

@@ -9,15 +9,16 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useCallback, useMemo} from 'react';
 import localimages from '../utils/localimages';
 import {DesignWidth, vw} from '../utils/dimensions';
 import {colors} from '../utils/colors';
 import Video from 'react-native-video';
+import TimeLine from './timeLine';
 
 export default function Story() {
   const [isVisible, setVisible] = useState(false);
-  const timeLine = useRef(new Animated.Value(0)).current;
+  const [imageIndex, setImageIndex] = useState(0);
 
   const storyArray = [
     {
@@ -25,78 +26,32 @@ export default function Story() {
       source: localimages.LANDING_BG,
       type: 'image',
     },
+    {
+      id: 2,
+      source: localimages.PLACEHOLDER,
+      type: 'image',
+    },
+    {
+      id: 3,
+      source: require('../assets/images/vid.mp4'),
+      type: 'video',
+    },
   ];
 
-  const width = DesignWidth / (storyArray.length * 1.02);
+  const timeout = 3000 * storyArray.length + 600;
 
-  useEffect(() => {
-    if (isVisible) {
-      Animated.timing(timeLine, {
-        toValue: 1,
-        duration: 3000,
-        useNativeDriver: true,
-      }).start(({finished})=>{
-        setVisible(false)
-      })
-    }else{
-      Animated.timing(timeLine, {
-        toValue: 0,
-        duration: 30,
-        useNativeDriver: true,
-      }).start()
-    }
-  }, [isVisible]);
+  console.log(storyArray[imageIndex]?.id);
 
   // @ts-ignore
   const renderItem = ({item, index}) => {
-    if (!isVisible) {
-      Animated.timing(timeLine, {
-        toValue: 1,
-        delay: 1000,
-        duration: 4000,
-        useNativeDriver: true,
-      }).start(({finished})=>{
-        setVisible(false)
-      })
-    }
-    return (
-      <View>
-      <View
-        style={[
-          {
-            backgroundColor: colors.WHITE_30,
-            height: vw(3),
-            width: vw(width),
-            marginHorizontal: vw(2),
-            borderRadius: vw(4),
-            overflow: 'hidden',
-          },
-        ]}>
-        <Animated.View
-          key={item.id}
-          style={[
-            {
-              backgroundColor: colors.WHITE,
-              height: vw(3),
-              width: vw(width),
-              borderRadius: vw(4),
-            },
-            {
-              transform: [
-                {
-                  translateX: timeLine.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [-vw(width), 0],
-                  }),
-                },
-              ],
-            },
-          ]}
-        />
-      </View>
-      <Image source={item.source} />
-      </View>
-    );
+    setTimeout(() => {
+      setVisible(false);
+      setImageIndex(0);
+    }, timeout);
+    setTimeout(() => {
+      setImageIndex(imageIndex + 1);
+    }, 3500);
+    return <TimeLine index={index} length={storyArray.length} />;
   };
 
   return (
@@ -105,6 +60,7 @@ export default function Story() {
         style={styles.profileHolder}
         onPress={() => {
           setVisible(true);
+          setImageIndex(0);
         }}>
         <Image source={localimages.PLACEHOLDER} style={styles.initialImage} />
       </TouchableOpacity>
@@ -117,10 +73,24 @@ export default function Story() {
       /> */}
       <Modal transparent={true} visible={isVisible} animationType="slide">
         <TouchableOpacity
-          style={{flex: 1}}
+          style={{flex: 1, alignItems: 'center', backgroundColor: colors.BLACK}}
           onPress={() => setVisible(false)}>
           <SafeAreaView style={{flex: 1}}>
-              <FlatList data={storyArray} renderItem={renderItem} horizontal />
+            <FlatList data={storyArray} renderItem={renderItem} horizontal />
+            {storyArray[imageIndex]?.type == 'image' ? (
+              <Image
+                source={storyArray[imageIndex]?.source}
+                style={{height: vw(720), width: vw(375)}}
+              />
+            ) : (
+              <Video
+                source={storyArray[imageIndex]?.source}
+                // controls={true}
+                // muted={false}
+                style={{height: vw(720), width: vw(375)}}
+                resizeMode={'cover'}
+              />
+            )}
           </SafeAreaView>
         </TouchableOpacity>
       </Modal>
