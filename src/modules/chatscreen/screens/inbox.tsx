@@ -49,6 +49,8 @@ export function Inbox({route}: any) {
   const docid = UID > UserId ? UserId + '-' + UID : UID + '-' + UserId;
   const timeText = {left: {fontSize: vw(9)}, right: {fontSize: vw(9)}};
 
+  console.log('RAN')
+
   useEffect(() => {
     const subscribe = firestore()
       .collection('chatrooms')
@@ -66,11 +68,12 @@ export function Inbox({route}: any) {
         //@ts-ignore
         setMessages(allmsg);
       });
+      getActiveStatus()
 
     return subscribe;
   }, []);
 
-  useEffect(() => {
+ const getActiveStatus=() => {
     const subscribe = firestore()
       .collection('Users')
       .doc(UID)
@@ -80,7 +83,7 @@ export function Inbox({route}: any) {
       });
     getAllmsg();
     return subscribe;
-  }, []);
+  }
 
   const getAllmsg = async () => {
     const querySanp = await firestore()
@@ -239,7 +242,7 @@ export function Inbox({route}: any) {
         {...props}
         tickStyle={{color: colors.WHITE, marginRight: vw(-6)}}
         wrapperStyle={{
-          left: {backgroundColor: colors.LEFT_BUBBLE},
+          left: {backgroundColor: colors.LEFT_BUBBLE,marginLeft: vw(-40),},
           right: {backgroundColor: colors.RIGHT_BUBBLE},
         }}
         textStyle={{
@@ -317,7 +320,6 @@ export function Inbox({route}: any) {
       </SafeAreaView> */}
       <GiftedChat
         isKeyboardInternallyHandled={true}
-        infiniteScroll={true}
         onInputTextChanged={findtyping}
         renderActions={renderAction}
         renderSend={renderSend}

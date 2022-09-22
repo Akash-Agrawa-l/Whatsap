@@ -23,6 +23,11 @@ export function AddChat({navigation}:any) {
         let users = res?._docs?.map((item: any) => {
           return item._data;
         });
+        users = users.sort((a:any,b:any)=>{
+          if(a.Name < b.Name){
+            return -1
+        }
+        })
 
         updateAllUsers(users);
       });

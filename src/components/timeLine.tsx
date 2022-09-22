@@ -17,14 +17,12 @@ export default function TimeLine({
   const width = 375 / (length * 1.04);
 
   useEffect(() => {
-      setTimeout(() => {
         Animated.timing(timeLine, {
           toValue: 1,
-          delay: 600,
+          delay: 600 + (3000 * index),
           duration: 3000,
           useNativeDriver: true,
         }).start();
-      }, 3000 * index);
   }, []);
 
   return (

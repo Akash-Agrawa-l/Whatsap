@@ -155,6 +155,7 @@ const styles = StyleSheet.create({
     letterSpacing: vw(3),
     fontSize: vw(12),
     lineHeight: vw(13),
+    marginTop: vw(10),
   },
   recentUsers: {
     height: vw(105),

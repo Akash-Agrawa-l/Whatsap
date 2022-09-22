@@ -10,10 +10,10 @@ import {
   View,
 } from 'react-native';
 import React, {useState, useCallback, useMemo} from 'react';
-import localimages from '../utils/localimages';
-import {DesignWidth, vw} from '../utils/dimensions';
-import {colors} from '../utils/colors';
 import Video from 'react-native-video';
+import localimages from '../utils/localimages';
+import {vw} from '../utils/dimensions';
+import {colors} from '../utils/colors';
 import TimeLine from './timeLine';
 
 export default function Story() {
@@ -64,13 +64,6 @@ export default function Story() {
         }}>
         <Image source={localimages.PLACEHOLDER} style={styles.initialImage} />
       </TouchableOpacity>
-      {/* <Video
-        source={require('../assets/images/vid.mp4')}
-        controls={true}
-        muted={false}
-        style={{height: 100, width: 140}}
-        resizeMode={'cover'}
-      /> */}
       <Modal transparent={true} visible={isVisible} animationType="slide">
         <TouchableOpacity
           style={{flex: 1, alignItems: 'center', backgroundColor: colors.BLACK}}

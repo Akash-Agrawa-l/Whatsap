@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: vw(45),
     justifyContent: 'space-between',
-    // overflow: 'hidden',
+    overflow: 'hidden',
     // position: 'absolute',
     // top: 10,
     // zIndex: 10,
